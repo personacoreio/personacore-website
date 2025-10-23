@@ -1,66 +1,55 @@
+import Stripe from 'stripe';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
-  
-  // Handle CORS preflight
-  if (request.method === 'OPTIONS') {
-    return new Response('ok', { 
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      }
-    });
-  }
 
   try {
-    const { price_id, fan_id, creator_slug } = await request.json();
-    
-    // Create Stripe checkout session
-    const params = new URLSearchParams({
-      'mode': 'subscription',
-      'line_items[0][price]': price_id,
-      'line_items[0][quantity]': '1',
-      'success_url': `https://personacore.io/success?session_id={CHECKOUT_SESSION_ID}`,
-      'cancel_url': `https://personacore.io/join/${creator_slug}`,
-      'client_reference_id': fan_id,
-      'metadata[creator_slug]': creator_slug,
-      'metadata[fan_id]': fan_id,
-      'subscription_data[metadata][creator_slug]': creator_slug,
-      'subscription_data[metadata][fan_id]': fan_id,
-    });
+    const body = await request.json();
+    const { price_id, creator_slug, username } = body;
 
-    const stripeResponse = await fetch('https://api.stripe.com/v1/checkout/sessions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params.toString(),
-    });
-
-    if (!stripeResponse.ok) {
-      const error = await stripeResponse.text();
-      throw new Error(`Stripe error: ${error}`);
+    if (!price_id || !creator_slug || !username) {
+      return new Response(
+        JSON.stringify({ error: 'Missing price_id, creator_slug, or username' }), 
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
-    const session = await stripeResponse.json();
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+    });
 
-    return new Response(JSON.stringify({ url: session.url }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      line_items: [
+        {
+          price: price_id,
+          quantity: 1,
+        },
+      ],
+      success_url: `${env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.BASE_URL}/join/${creator_slug}`,
+      metadata: {
+        creator_slug: creator_slug,
+        username: username,  // NEW: Pass username to webhook
       },
     });
+
+    return new Response(
+      JSON.stringify({ url: session.url }),
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
 
   } catch (error) {
-    console.error('Checkout error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    console.error('Stripe session creation error:', error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 }

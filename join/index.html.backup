@@ -117,76 +117,6 @@
             font-weight: bold;
             margin-right: 10px;
         }
-        
-        /* Username Form Styles */
-        .username-form {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-        .username-form h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-            font-size: 0.95em;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: all 0.3s;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .form-group input.error {
-            border-color: #f44336;
-        }
-        .form-group input.success {
-            border-color: #4caf50;
-        }
-        .validation-message {
-            margin-top: 8px;
-            font-size: 0.9em;
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: none;
-        }
-        .validation-message.error {
-            background: #ffebee;
-            color: #c62828;
-            display: block;
-        }
-        .validation-message.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            display: block;
-        }
-        .validation-message.checking {
-            background: #e3f2fd;
-            color: #1565c0;
-            display: block;
-        }
-        .username-rules {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 8px;
-            line-height: 1.6;
-        }
-        
         .btn {
             width: 100%;
             padding: 18px;
@@ -267,32 +197,9 @@
                 <li>Cancel anytime, no commitments</li>
             </ul>
             
-            <!-- Username Form -->
-            <form id="usernameForm" class="username-form">
-                <h3>Choose Your Username</h3>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        name="username" 
-                        placeholder="e.g. johndoe123"
-                        autocomplete="off"
-                        required
-                        pattern="[a-zA-Z0-9_-]+"
-                        minlength="3"
-                        maxlength="30"
-                    />
-                    <div class="username-rules">
-                        3-30 characters • Letters, numbers, hyphens, underscores only
-                    </div>
-                    <div id="usernameValidation" class="validation-message"></div>
-                </div>
-                
-                <button type="submit" id="subscribeBtn" class="btn" disabled>
-                    Continue to Payment
-                </button>
-            </form>
+            <button id="subscribeBtn" class="btn">
+                Subscribe & Start Chatting
+            </button>
             
             <div id="error" class="error"></div>
         </div>
@@ -311,13 +218,11 @@
         const pathParts = window.location.pathname.split('/').filter(p => p);
         const creatorSlug = pathParts[1]; // /join/creator-slug -> creator-slug
         
-        // Supabase config
+        // Supabase config - REPLACE WITH YOUR ACTUAL VALUES
         const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
         
         let creatorData = null;
-        let usernameAvailable = false;
-        let checkTimeout = null;
         
         async function loadCreator() {
             if (!creatorSlug) {
@@ -326,6 +231,7 @@
             }
             
             try {
+                // Fetch creator from Supabase
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/creators?slug=eq.${creatorSlug}&status=eq.active&select=id,name,slug,bio,expertise,subscription_price_id`, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
@@ -346,6 +252,7 @@
                 
                 creatorData = data[0];
                 
+                // Check if creator has subscription_price_id
                 if (!creatorData.subscription_price_id) {
                     showError('This creator hasn\'t set up subscriptions yet.');
                     return;
@@ -389,120 +296,28 @@
             errorDiv.style.display = 'block';
         }
         
-        // Username validation
-        const usernameInput = document.getElementById('username');
-        const validationMessage = document.getElementById('usernameValidation');
-        const subscribeBtn = document.getElementById('subscribeBtn');
-        
-        function validateUsernameFormat(username) {
-            if (username.length < 3) {
-                return { valid: false, message: 'Username must be at least 3 characters' };
-            }
-            if (username.length > 30) {
-                return { valid: false, message: 'Username must be 30 characters or less' };
-            }
-            if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
-                return { valid: false, message: 'Only letters, numbers, hyphens and underscores allowed' };
-            }
-            return { valid: true };
-        }
-        
-        async function checkUsernameAvailability(username) {
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/fans?username=eq.${username}&select=username`, {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to check username');
-                }
-                
-                const data = await response.json();
-                return data.length === 0; // Available if no results
-                
-            } catch (error) {
-                console.error('Username check error:', error);
-                return false;
-            }
-        }
-        
-        usernameInput.addEventListener('input', (e) => {
-            const username = e.target.value.trim();
+        // Subscribe button handler
+        document.getElementById('subscribeBtn').addEventListener('click', async () => {
+            if (!creatorData) return;
             
-            // Clear previous timeout
-            if (checkTimeout) {
-                clearTimeout(checkTimeout);
-            }
-            
-            // Reset state
-            usernameInput.classList.remove('error', 'success');
-            validationMessage.className = 'validation-message';
-            usernameAvailable = false;
-            subscribeBtn.disabled = true;
-            
-            if (!username) {
-                return;
-            }
-            
-            // Format validation
-            const formatCheck = validateUsernameFormat(username);
-            if (!formatCheck.valid) {
-                usernameInput.classList.add('error');
-                validationMessage.className = 'validation-message error';
-                validationMessage.textContent = formatCheck.message;
-                return;
-            }
-            
-            // Show checking message
-            validationMessage.className = 'validation-message checking';
-            validationMessage.textContent = 'Checking availability...';
-            
-            // Debounce the availability check
-            checkTimeout = setTimeout(async () => {
-                const available = await checkUsernameAvailability(username);
-                
-                if (available) {
-                    usernameInput.classList.add('success');
-                    validationMessage.className = 'validation-message success';
-                    validationMessage.textContent = '✓ Username available!';
-                    usernameAvailable = true;
-                    subscribeBtn.disabled = false;
-                } else {
-                    usernameInput.classList.add('error');
-                    validationMessage.className = 'validation-message error';
-                    validationMessage.textContent = 'Username already taken. Please choose another.';
-                    usernameAvailable = false;
-                    subscribeBtn.disabled = true;
-                }
-            }, 500); // Wait 500ms after user stops typing
-        });
-        
-        // Form submission
-        document.getElementById('usernameForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!creatorData || !usernameAvailable) return;
-            
-            const username = usernameInput.value.trim();
-            const btn = subscribeBtn;
+            const btn = document.getElementById('subscribeBtn');
             const errorDiv = document.getElementById('error');
             
             btn.disabled = true;
             btn.textContent = 'Processing...';
             errorDiv.style.display = 'none';
             
+            const fanId = crypto.randomUUID();
+            
             try {
-                // Call your Cloudflare Function with username
+                // Call your Cloudflare Function
                 const response = await fetch('/create-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         price_id: creatorData.subscription_price_id,
-                        creator_slug: creatorData.slug,
-                        username: username  // NEW: Pass username
+                        fan_id: fanId,
+                        creator_slug: creatorData.slug
                     })
                 });
                 
@@ -525,7 +340,7 @@
                 errorDiv.textContent = 'Error: ' + error.message;
                 errorDiv.style.display = 'block';
                 btn.disabled = false;
-                btn.textContent = 'Continue to Payment';
+                btn.textContent = 'Subscribe & Start Chatting';
             }
         });
         
