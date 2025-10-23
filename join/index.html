@@ -3,661 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Creator - Persona Core</title>
+    <title>Join PersonaCore</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #1d1d1f;
-            background: #f5f5f7;
-        }
-
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 15px 20px;
-            border-bottom: 1px solid #e5e5e7;
-        }
-
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            height: 30px;
-            width: auto;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .hero {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 140px 20px 80px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-
-        .hero-content {
+        .container {
             max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-
-        h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            opacity: 0.95;
-        }
-
-        .creator-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 1.1rem;
+        .logo {
+            text-align: center;
             margin-bottom: 30px;
         }
-
-        /* Pricing section - completely separate from hero */
-        .pricing-section {
-            padding: 80px 20px;
-            background: white;
+        .logo a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: 800;
         }
-
-        .pricing-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-size: 2em;
             text-align: center;
         }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #1d1d1f;
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
         }
-
-        .section-subtitle {
-            font-size: 1.2rem;
-            color: #86868b;
-            margin-bottom: 50px;
-        }
-
-        .signup-card {
-            max-width: 480px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            border: 1px solid #f0f0f0;
-        }
-
-        .pricing-header {
+        .creator-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px 30px;
-            text-align: center;
-            border-radius: 24px 24px 0 0;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
         }
-
-        .price {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
+        .creator-card h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
         }
-
-        .price-period {
-            font-size: 1.1rem;
+        .expertise {
+            font-size: 0.9em;
             opacity: 0.9;
-        }
-
-        .features {
-            padding: 20px 30px;
-            background: #f5f5f7;
-            text-align: center;
-        }
-
-        .features ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .features li {
-            color: #667eea;
+            margin-bottom: 15px;
             font-weight: 600;
-            font-size: 0.9rem;
         }
-
-        .features li:before {
-            content: "✓ ";
-            font-weight: 700;
+        .bio {
+            line-height: 1.6;
+            opacity: 0.95;
         }
-
-        .form-section {
-            padding: 40px;
-            border-radius: 0 0 24px 24px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #1d1d1f;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e5e5e7;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .payment-section {
+        .pricing {
             background: #f8f9fa;
             padding: 25px;
-            border-radius: 16px;
-            margin: 30px 0;
-            border: 2px solid #e5e5e7;
-        }
-
-        .payment-section h3 {
-            margin-bottom: 15px;
-            color: #1d1d1f;
-            font-size: 1.1rem;
-        }
-
-        .btn {
-            padding: 16px 40px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-            display: inline-block;
-            width: 100%;
+            border-radius: 12px;
             text-align: center;
+            margin-bottom: 30px;
         }
-
-        .btn-primary {
+        .price {
+            font-size: 3em;
+            font-weight: 800;
+            color: #667eea;
+        }
+        .price-period {
+            font-size: 0.3em;
+            color: #666;
+        }
+        .price-desc {
+            color: #666;
+            margin-top: 10px;
+        }
+        .features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        .features li {
+            padding: 12px 0;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .features li:before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .btn {
+            width: 100%;
+            padding: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-
-        .btn-primary:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
-
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none !important;
         }
-
-        .login-link {
-            text-align: center;
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
             margin-top: 20px;
-            color: #86868b;
-        }
-
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .security {
-            text-align: center;
-            margin-top: 20px;
-            color: #86868b;
-            font-size: 0.9rem;
-        }
-
-        .security:before {
-            content: "🔒 ";
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid #fcc;
             display: none;
         }
-
-        .success-message {
-            background: #efe;
-            color: #363;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid #cfc;
-            display: none;
+        .not-found {
+            text-align: center;
+            padding: 40px 20px;
         }
-
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
+        .not-found h1 {
+            color: #f44336;
+            margin-bottom: 20px;
         }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .signup-card {
-                margin: 0 20px;
-                border-radius: 20px;
-            }
-            
-            .form-section {
-                padding: 30px 25px;
-                border-radius: 0 0 20px 20px;
-            }
-
-            .pricing-header {
-                border-radius: 20px 20px 0 0;
-                padding: 30px 20px;
-            }
+        .not-found p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            h1 { font-size: 1.6em; }
+            .price { font-size: 2.5em; }
         }
     </style>
-
-    <!-- Include Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-content">
-            <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" alt="Persona Core" class="logo">
-            <div>
-                <a href="https://personacore.io" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">
-                    ← Back to Persona Core
-                </a>
-            </div>
+    <div class="container">
+        <div class="logo">
+            <a href="/">← PersonaCore</a>
         </div>
-    </nav>
-
-    <!-- Hero Section - Just the creator intro -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 id="creator-name">Chat with Creator</h1>
-            <div class="creator-badge" id="creator-badge">AI Twin</div>
-            <p id="creator-description">Get 24/7 access to personalized conversations</p>
+        
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading creator...</p>
         </div>
-    </section>
-
-    <!-- Separate Pricing & Signup Section -->
-    <section class="pricing-section">
-        <div class="pricing-container">
-            <h2 class="section-title">Start Chatting Today</h2>
-            <p class="section-subtitle">Join thousands of fans chatting with AI twins</p>
+        
+        <div id="contentState" style="display: none;">
+            <h1 id="pageTitle"></h1>
+            <p class="subtitle">Get personalized advice 24/7</p>
             
-            <div class="signup-card">
-                <!-- Pricing Header -->
-                <div class="pricing-header">
-                    <div class="price">£5</div>
-                    <div class="price-period">per month</div>
-                </div>
-
-                <!-- Features -->
-                <div class="features">
-                    <ul>
-                        <li>1,000 messages/month</li>
-                        <li>24/7 access</li>
-                        <li>Cancel anytime</li>
-                    </ul>
-                </div>
-
-                <!-- Messages -->
-                <div class="error-message" id="error-message"></div>
-                <div class="success-message" id="success-message"></div>
-
-                <!-- Signup Form -->
-                <div class="form-section">
-                    <form id="fan-signup-form">
-                        <div class="form-group">
-                            <label for="fan-email">Email Address</label>
-                            <input type="email" id="fan-email" class="form-input" placeholder="your.email@example.com" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="fan-username">Username</label>
-                            <input type="text" id="fan-username" class="form-input" placeholder="Choose a username (letters, numbers, _- only)" required>
-                            <small style="color: #86868b; font-size: 0.8rem;">No spaces allowed. Only letters, numbers, hyphens, and underscores.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="fan-password">Password</label>
-                            <input type="password" id="fan-password" class="form-input" placeholder="Create a secure password" required>
-                        </div>
-
-                        <!-- Payment Section -->
-                        <div class="payment-section">
-                            <h3>Payment Method</h3>
-                            <div style="text-align: center; color: #86868b; padding: 20px; background: white; border-radius: 8px;">
-                                Secure payment handled by Stripe
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" id="submit-btn">
-                            Start Chatting - £5/month
-                        </button>
-
-                        <div class="security">
-                            Secure payment powered by Stripe
-                        </div>
-
-                        <div class="login-link">
-                            Already have an account? <a href="#" id="login-link">Sign in</a>
-                        </div>
-                    </form>
-                </div>
+            <div class="creator-card">
+                <h2 id="creatorName"></h2>
+                <div class="expertise" id="creatorExpertise"></div>
+                <div class="bio" id="creatorBio"></div>
             </div>
+            
+            <div class="pricing">
+                <div class="price">£5<span class="price-period">/month</span></div>
+                <div class="price-desc">Unlimited chat access</div>
+            </div>
+            
+            <ul class="features">
+                <li id="feature1">Chat 24/7 with AI twin</li>
+                <li>Get personalized advice and insights</li>
+                <li>Direct responses in authentic voice</li>
+                <li>Cancel anytime, no commitments</li>
+            </ul>
+            
+            <button id="subscribeBtn" class="btn">
+                Subscribe & Start Chatting
+            </button>
+            
+            <div id="error" class="error"></div>
         </div>
-    </section>
-
-    <script>
-    let supabase;
-    let appInitialized = false;
-
-    // Simple Supabase initialization
-    async function initializeSupabase() {
-        console.log('Starting Supabase initialization...');
         
-        try {
-            // Use the global supabase from the CDN
-            if (window.supabase) {
-                console.log('Supabase found in window object');
-                const supabaseUrl = 'https://hmcartafonsppirzmtoq.supabase.co'; // REPLACE WITH YOUR URL
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg'; // REPLACE WITH YOUR KEY
-                
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                console.log('Supabase initialized successfully');
-                return true;
-            } else {
-                console.log('Supabase not in window, trying dynamic import...');
-                // Fallback: dynamic import
-                const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-                const supabaseUrl = 'https://hmcartafonsppirzmtoq.supabase.co'; // REPLACE WITH YOUR URL
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg'; // REPLACE WITH YOUR KEY
-                
-                supabase = createClient(supabaseUrl, supabaseKey);
-                console.log('Supabase initialized via dynamic import');
-                return true;
-            }
-        } catch (error) {
-            console.error('Supabase initialization failed:', error);
-            return false;
-        }
-    }
-
-    // Get creator slug from URL
-    function getCreatorSlugFromURL() {
-        const path = window.location.pathname;
-        const parts = path.split('/');
-        return parts[2];
-    }
-
-    // Show error message
-    function showError(message) {
-        const errorEl = document.getElementById('error-message');
-        if (errorEl) {
-            errorEl.textContent = message;
-            errorEl.style.display = 'block';
-        }
-    }
-
-    // Show success message
-    function showSuccess(message) {
-        const successEl = document.getElementById('success-message');
-        if (successEl) {
-            successEl.textContent = message;
-            successEl.style.display = 'block';
-        }
-    }
-
-    // Set loading state
-    function setLoading(loading) {
-        const btn = document.getElementById('submit-btn');
-        if (btn) {
-            if (loading) {
-                btn.disabled = true;
-                btn.innerHTML = 'Processing...';
-            } else {
-                btn.disabled = false;
-                btn.innerHTML = 'Start Chatting - £5/month';
-            }
-        }
-    }
-
-    // Load creator data
-    async function loadCreatorData() {
-        if (!supabase) {
-            console.error('Cannot load creator: Supabase not initialized');
-            return null;
-        }
-
-        const creatorSlug = getCreatorSlugFromURL();
-        if (!creatorSlug) {
-            showError('Invalid creator link.');
-            return null;
-        }
-
-        try {
-            console.log('Loading creator:', creatorSlug);
-            const { data: creator, error } = await supabase
-                .from('creators')
-                .select('display_name, subscription_price_id, bio, slug')
-                .eq('slug', creatorSlug)
-                .single();
-
-            if (error) throw error;
-            if (!creator) throw new Error('Creator not found');
-
-            // Update page
-            document.getElementById('creator-name').textContent = `Chat with ${creator.display_name}`;
-            document.getElementById('creator-badge').textContent = `AI Twin of ${creator.display_name}`;
-            if (creator.bio) {
-                document.getElementById('creator-description').textContent = creator.bio;
-            }
-            document.querySelector('.section-title').textContent = `Chat with ${creator.display_name}'s AI Twin`;
-
-            console.log('Creator loaded:', creator.display_name);
-            return creator;
-
-        } catch (error) {
-            console.error('Error loading creator:', error);
-            showError('Creator not found or not set up yet.');
-            return null;
-        }
-    }
-
-    // Form submission
-    async function handleFormSubmit(e) {
-        e.preventDefault();
-        console.log('Form submission started');
-        
-        if (!supabase) {
-            showError('System not ready. Please refresh.');
-            return;
-        }
-        
-        setLoading(true);
-        showError('');
-
-        const email = document.getElementById('fan-email').value;
-        const username = document.getElementById('fan-username').value;
-        const password = document.getElementById('fan-password').value;
-        const creator = window.creatorData;
-
-        if (!creator) {
-            showError('Please refresh the page.');
-            setLoading(false);
-            return;
-        }
-
-        // Basic validation
-        if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
-            showError('Invalid username format.');
-            setLoading(false);
-            return;
-        }
-
-        try {
-            // Test: Just show success for now
-            console.log('Form data valid, showing success message');
-            showSuccess('Form is working! Account creation would happen here.');
-            setLoading(false);
-
-        } catch (error) {
-            console.error('Form error:', error);
-            showError('Something went wrong.');
-            setLoading(false);
-        }
-    }
-
-    // Setup event listeners
-    function setupEventListeners() {
-        const form = document.getElementById('fan-signup-form');
-        const loginLink = document.getElementById('login-link');
-        
-        if (form) {
-            form.addEventListener('submit', handleFormSubmit);
-            console.log('Form event listener added');
-        }
-        if (loginLink) {
-            loginLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showError('Please sign up for a new account.');
-            });
-        }
-    }
-
-    // Main initialization
-    async function initializeApp() {
-        console.log('=== APP INITIALIZATION STARTED ===');
-        
-        // Initialize Supabase
-        const supabaseReady = await initializeSupabase();
-        if (!supabaseReady) {
-            showError('Failed to initialize. Please refresh.');
-            return;
-        }
-
-        // Setup events
-        setupEventListeners();
-
-        // Load creator data
-        const creator = await loadCreatorData();
-        if (creator) {
-            window.creatorData = creator;
-        }
-
-        appInitialized = true;
-        console.log('=== APP INITIALIZATION COMPLETE ===');
-    }
-
-    // Start the app
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM ready, starting app...');
-        initializeApp();
-    });
-
-    // Also make sure the Supabase CDN is loaded
-    // Add this script tag to your head section if not already there
-	
-	// Extract creator name from URL
-function getCreatorFromPath() {
-  const path = window.location.pathname;
-  if (path.startsWith('/join/')) {
-    const segments = path.split('/').filter(seg => seg.length > 0);
-    if (segments.length >= 2) {
-      return segments[1]; // Returns "mr-crag" from "/join/mr-crag"
-    }
-  }
-  return null;
-}
-
-// Use the creator name
-document.addEventListener('DOMContentLoaded', function() {
-  const creatorSlug = getCreatorFromPath();
-  
-  if (creatorSlug) {
-    console.log('Loading creator:', creatorSlug);
-    // Here you would:
-    // 1. Validate the creator exists via your API
-    // 2. Pre-fill the form with creator data
-    // 3. Update the page title/header
-    document.title = `Join ${creatorSlug}'s Community - Persona Core`;
+        <div id="notFoundState" class="not-found" style="display: none;">
+            <h1>Creator Not Found</h1>
+            <p>Sorry, we couldn't find that creator. They may not exist or aren't active yet.</p>
+            <a href="/" class="btn" style="display: inline-block; text-decoration: none; width: auto; padding: 12px 30px;">
+                Back to Homepage
+            </a>
+        </div>
+    </div>
     
-    // Example: Set a hidden field or global variable
-    window.targetCreator = creatorSlug;
-  }
-});
-</script>
+    <script type="module">
+        // Get creator slug from URL
+        const pathParts = window.location.pathname.split('/').filter(p => p);
+        const creatorSlug = pathParts[1]; // /join/creator-slug -> creator-slug
+        
+        // Supabase config - REPLACE WITH YOUR ACTUAL VALUES
+        const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
+        
+        let creatorData = null;
+        
+        async function loadCreator() {
+            if (!creatorSlug) {
+                showNotFound();
+                return;
+            }
+            
+            try {
+                // Fetch creator from Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/creators?slug=eq.${creatorSlug}&status=eq.active&select=id,name,slug,bio,expertise,subscription_price_id`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch creator');
+                }
+                
+                const data = await response.json();
+                
+                if (!data || data.length === 0) {
+                    showNotFound();
+                    return;
+                }
+                
+                creatorData = data[0];
+                
+                // Check if creator has subscription_price_id
+                if (!creatorData.subscription_price_id) {
+                    showError('This creator hasn\'t set up subscriptions yet.');
+                    return;
+                }
+                
+                displayCreator(creatorData);
+                
+            } catch (error) {
+                console.error('Error loading creator:', error);
+                showError('Failed to load creator information. Please try again.');
+            }
+        }
+        
+        function displayCreator(creator) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentState').style.display = 'block';
+            
+            document.getElementById('pageTitle').textContent = `Chat with ${creator.name}'s AI Twin`;
+            document.getElementById('creatorName').textContent = creator.name;
+            
+            const expertise = Array.isArray(creator.expertise) 
+                ? creator.expertise.join(', ') 
+                : creator.expertise || 'Expert';
+            document.getElementById('creatorExpertise').textContent = expertise;
+            
+            document.getElementById('creatorBio').textContent = creator.bio || 'No bio available.';
+            document.getElementById('feature1').textContent = `Chat 24/7 with ${creator.name}'s AI twin`;
+        }
+        
+        function showNotFound() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('notFoundState').style.display = 'block';
+        }
+        
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentState').style.display = 'block';
+            document.getElementById('subscribeBtn').disabled = true;
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // Subscribe button handler
+        document.getElementById('subscribeBtn').addEventListener('click', async () => {
+            if (!creatorData) return;
+            
+            const btn = document.getElementById('subscribeBtn');
+            const errorDiv = document.getElementById('error');
+            
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            errorDiv.style.display = 'none';
+            
+            const fanId = crypto.randomUUID();
+            
+            try {
+                // Call your Cloudflare Function
+                const response = await fetch('/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        price_id: creatorData.subscription_price_id,
+                        fan_id: fanId,
+                        creator_slug: creatorData.slug
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to create checkout session');
+                }
+                
+                const data = await response.json();
+                
+                if (data.url) {
+                    // Redirect to Stripe checkout
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+                
+            } catch (error) {
+                console.error('Subscription error:', error);
+                errorDiv.textContent = 'Error: ' + error.message;
+                errorDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Subscribe & Start Chatting';
+            }
+        });
+        
+        // Load creator on page load
+        loadCreator();
+    </script>
 </body>
 </html>
