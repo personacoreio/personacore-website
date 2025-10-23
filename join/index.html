@@ -447,12 +447,15 @@
                 return;
             }
             
-            // Format validation
+            // Format validation - but only show errors after debounce for short usernames
             const formatCheck = validateUsernameFormat(username);
             if (!formatCheck.valid) {
-                usernameInput.classList.add('error');
-                validationMessage.className = 'validation-message error';
-                validationMessage.textContent = formatCheck.message;
+                // Only show error immediately for invalid characters, not for length
+                if (username.length >= 3 || !/^[a-zA-Z0-9_-]+$/.test(username)) {
+                    usernameInput.classList.add('error');
+                    validationMessage.className = 'validation-message error';
+                    validationMessage.textContent = formatCheck.message;
+                }
                 return;
             }
             
