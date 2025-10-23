@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persona Core - AI Twins for Creators</title>
+    <meta name="description" content="AI twins for content creators. £299 setup fee.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #1d1d1f;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px 120px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Demo Section */
+        .demo-section {
+            padding: 80px 20px;
+            background: #f5f5f7;
+            margin-top: -60px;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1d1d1f;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #86868b;
+            margin-bottom: 50px;
+        }
+
+        .demo-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .demo-container iframe {
+            width: 100%;
+            height: 650px;
+            border: none;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .step {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #1d1d1f;
+        }
+
+        .step p {
+            color: #86868b;
+            font-size: 1.05rem;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 80px 20px;
+            background: #f5f5f7;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 50px auto 0;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid #667eea;
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #1d1d1f;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .price span {
+            font-size: 1.2rem;
+            color: #86868b;
+        }
+
+        .features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        .features li:before {
+            content: "✓ ";
+            color: #34a853;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        /* FAQ */
+        .faq {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 50px auto 0;
+        }
+
+        .faq-item {
+            background: #f5f5f7;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .faq-item h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .faq-item p {
+            color: #1d1d1f;
+            line-height: 1.8;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        footer {
+            background: #1d1d1f;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .social-links a:hover {
+            opacity: 0.7;
+        }
+
+        footer p {
+            color: #86868b;
+            margin-top: 20px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .demo-container iframe {
+                height: 550px;
+            }
+        }
+    </style>
+	<!-- Add before closing head tag -->
+<script>
+    // Track button clicks
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Add your analytics code here
+            console.log('Button clicked:', this.textContent);
+        });
+    });
+</script>
+</head>
+<body>
+<!-- Add this before the hero section -->
+<header style="position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 15px 20px;">
+    <nav style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" alt="Persona Core" style="height: 30px;">
+        <div style="display: flex; gap: 30px;">
+            <a href="#demo" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">Demo</a>
+            <a href="#how-it-works" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">How It Works</a>
+            <a href="#pricing" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">Pricing</a>
+            <a href="#faq" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">FAQ</a>
+        </div>
+    </nav>
+</header>
+    <!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="logo" style="margin-bottom: 30px;">
+            <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" 
+                 alt="Persona Core" 
+                 style="height: 70px; width: auto; filter: brightness(0) invert(1);">
+        </div>
+        <h1>AI Twins for Creators</h1>
+            <p>Let your fans chat with your AI personality 24/7. Scale your fan engagement without the burnout.</p>
+            <div class="cta-buttons">
+                <a href="#pricing" class="btn btn-primary">See Pricing</a>
+                <a href="#demo" class="btn btn-secondary">Try Demo</a>
+				<a href="#faq" class="btn btn-primary">FAQs</a>
+				<a href="#how-it-works" class="btn btn-primary">How Does It Work?</a>
+            </div>
+        </div>
+    </section>
+
+   <!-- Demo Section -->
+<section id="demo" class="demo-section">
+    <div class="container">
+        <h2 class="section-title">See It In Action</h2>
+        <p class="section-subtitle">Chat with MovieTwin - our demo AI twin of a foul-mouthed UK film critic</p>
+        
+        <!-- Fallback demo container -->
+        <div class="demo-container">
+            <div id="widget-fallback" style="display: none; text-align: center; padding: 60px 20px; background: white; border-radius: 20px;">
+                <h3 style="margin-bottom: 20px;">🚧 Demo Widget Updating</h3>
+                <p style="margin-bottom: 30px; color: #666;">Our AI twin is getting a personality upgrade!</p>
+                <a href="https://movietwin-widget.pages.dev" target="_blank" class="btn btn-primary">
+                    Try MovieTwin Direct Link
+                </a>
+            </div>
+            
+            <iframe 
+                src="https://movietwin-widget.pages.dev"
+                style="width: 100%; height: 650px; border: none;"
+                onload="console.log('Widget loaded')"
+                onerror="document.getElementById('widget-fallback').style.display='block'">
+            </iframe>
+        </div>
+        
+        <p style="text-align: center; margin-top: 30px; color: #86868b;">
+            ☝️ This is a real AI twin. Imagine YOUR fans chatting with YOUR twin.
+        </p>
+    </div>
+</section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Get your AI twin live in 3 simple steps</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Tell Us About You</h3>
+                    <p>Fill out our simple questionnaire about your style, topics, and personality.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>We Build Your Twin</h3>
+                    <p>Our team creates your AI personality and tests it to perfection.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Embed & Launch</h3>
+                    <p>Your AI twin goes live on our website. Start engaging instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <p class="section-subtitle">Creators pay a one-off setup fee, we do the rest</p>
+            <div class="pricing-cards">
+                <div class="pricing-card featured">
+                    <span class="badge">Full Setup Included</span>
+                    <h3>Creator Plan</h3>
+                    <div class="price">£299<span></div>
+                    <p style="color: #86868b; margin-bottom: 20px;">For creators</p>
+                    <ul class="features">
+                        <li><strong>1,000 messages/month per fan</strong> <span class="note">(resets monthly)</span></li>
+						<li><strong>50,000 total messages/month</strong> included <span class="note">(scales with your fanbase)</span></li>
+						<li>Advanced AI personality <span class="note">(always-on, intelligent conversations)</span></li>
+						<li>Personalized analytics dashboard</li>
+						<li>Custom greeting & personality setup</li>
+						<li>Your dedicated PersonaCore page</li>
+						<li>Standard email support</li>
+                    </ul>
+                    <a href="mailto:hello@personacore.io?subject=Creator Plan" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</a>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 40px; color: #86868b;">
+                🎉 <strong>Early Bird Special:</strong> First 3 creators get free AI twin setup. Limited spots.
+            </p>
+        </div>
+    </section>
+	
+	<section class="testimonials" style="padding: 80px 20px; background: #f5f5f7;">
+    <div class="container">
+        <h2 class="section-title">What Creators Say</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px;">
+            <div style="background: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <p style="font-style: italic; margin-bottom: 20px;">"My AI twin handles thousands of fan chats each month. Game changer!"</p>
+                <p style="font-weight: 600;">- YouTube Creator (250K subs)</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <p style="font-style: italic; margin-bottom: 20px;">"Fans love the 24/7 access. Engagement doubled."</p>
+                <p style="font-weight: 600;">- Twitch Streamer</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- FAQ -->
+<section id="faq" class="faq">
+    <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
+
+            <div class="faq-item">
+                <h3>How long does setup take?</h3>
+                <p>Once you complete our questionnaire (which takes 2–3 hours), we’ll build your AI twin within 3–5 working days. As soon as it’s ready, your creator chat page will be live and ready to launch.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Can I update my twin's personality?</h3>
+                <p>Absolutely! Your AI twin should evolve with your fanbase. You can update your twin whenever you'd like by submitting new content or preferences.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>What happens if I exceed my message limit?</h3>
+                <p>We’ll send you a heads-up if you're getting close to your fair use message limit. If you're consistently over, we’ll reach out to discuss a custom plan that works for you.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Are there any ongoing costs?</h3>
+                <p>No monthly fees. You only pay a one-time setup fee to build your AI twin. PersonaCore takes a 30% commission from any fan subscription revenue; the remaining 70% goes directly to you.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Is my data secure?</h3>
+                <p>Yes! We use Cloudflare's secure infrastructure and OpenAI’s API. Your data is never sold or shared with third parties.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>What does the setup fee include?</h3>
+                <p>The setup fee covers full AI twin creation, training using your custom questionnaire, and the launch of your personalized fan chat page. It’s a one-time cost with no hidden fees.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Can I remove or pause my AI twin?</h3>
+                <p>Yes, you're always in control. If you ever want to pause or delete your twin, just contact us and we’ll take care of it promptly.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>How do fans chat with my AI twin?</h3>
+                <p>Fans can interact with your AI twin via your public chat page. Each message is designed to reflect your personality and tone, creating a unique fan experience.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+    <!-- Final CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Scale Your Engagement?</h2>
+            <p>Join the creators who are already using AI twins to connect with their fans 24/7</p>
+            <a href="mailto:info@personacore.io?subject=Get Started" class="btn btn-primary">Get Your Twin Today</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+    <div class="footer-content">
+        <div style="margin-top: 20px;">
+            <a href="/privacy" style="color: #86868b; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
+            <a href="/terms" style="color: #86868b; text-decoration: none; margin: 0 10px;">Terms of Service</a>
+        </div>
+    </div>
+            <div class="social-links">
+                <a href="https://twitter.com/personacoreai" target="_blank">Twitter/X</a>
+                <a href="https://instagram.com/personacoreio" target="_blank">Instagram</a>
+                <a href="https://tiktok.com/@personacoreai" target="_blank">TikTok</a>
+            </div>
+            <p>© 2025 Persona Core Ltd. All rights reserved.</p>
+            <p style="margin-top: 10px;">
+                <a href="mailto:infoo@personacore.io" style="color: #667eea; text-decoration: none;">hello@personacore.io</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

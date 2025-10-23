@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founding Creators - PersonaCore</title>
+    <meta name="description" content="Join PersonaCore's founding creator program. Clone yourself with AI, monetize your superfans, and keep 70% of revenue.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="white" opacity="0.1"/></svg>') repeat;
+            animation: drift 20s linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to { transform: translateY(100px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .trust-bar {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .trust-bar p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .benefits {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .benefits h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 60px;
+            color: #1a1a1a;
+        }
+
+        .benefit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .benefit-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .benefit-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .benefit-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .pricing-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+        }
+
+        .pricing-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-section h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a1a1a;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .pricing-card.featured {
+            background: white;
+            transform: scale(1.05);
+            border: 3px solid #ffd700;
+            position: relative;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #ffd700;
+            color: #1a1a1a;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85em;
+        }
+
+        .price {
+            font-size: 3em;
+            font-weight: 800;
+            margin: 20px 0;
+            color: #667eea;
+        }
+
+        .price-period {
+            font-size: 0.4em;
+            color: #666;
+            font-weight: 400;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .pricing-features li:before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .founders-section {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .founders-section h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .founders-perks {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .perk-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .perk-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .perk-icon {
+            font-size: 2.5em;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .perk-content h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .perk-content p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .how-it-works {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 60px;
+        }
+
+        .steps {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            line-height: 60px;
+            font-size: 1.8em;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .step h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .step p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .final-cta {
+            padding: 80px 20px;
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .final-cta p {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .cta-button-dark {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .cta-button-dark:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .spots-remaining {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .founders-perks {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <span class="badge">🚀 Founding Creator Program</span>
+            <h1>Clone Yourself.<br>Monetize Your Superfans.</h1>
+            <p>Join the first 3 creators building AI twins that chat with fans 24/7. We waive the setup fee (usually £299)</p>
+            <a href="/onboard" class="cta-button">Become a Founding Creator →</a>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <div class="trust-bar">
+        <p>🔥 <strong>3 spots remaining</strong> for founding creators | Applications reviewed within 24 hours</p>
+    </div>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="container">
+            <h2>Why Creators Love PersonaCore</h2>
+            <div class="benefit-grid">
+                <div class="benefit-card">
+                    <span class="benefit-icon">🤖</span>
+                    <h3>Your AI Twin</h3>
+                    <p>We capture your personality, voice, expertise, and style. Your twin responds exactly like you would.</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-icon">💰</span>
+                    <h3>70% Revenue Share</h3>
+                    <p>Industry-leading split. We only win when you win. Most platforms take 50%+. We take 30%.</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-icon">⚡</span>
+                    <h3>24/7 Engagement</h3>
+                    <p>Your twin never sleeps. Answer fan questions, build relationships, earn money while you focus on creating.</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-icon">🎯</span>
+                    <h3>Superfan Focused</h3>
+                    <p>£5/month subscriptions from your most engaged fans. Quality over quantity.</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-icon">🔒</span>
+                    <h3>You Own Your Data</h3>
+                    <p>Your conversations, your insights, your community. No lock-in. Export anytime.</p>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-icon">📈</span>
+                    <h3>Passive Income</h3>
+                    <p>Build recurring revenue while you sleep. 100 fans = £350/month in your pocket.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founders Perks -->
+    <section class="founders-section">
+        <div class="container">
+            <h2>Founding Creator Benefits</h2>
+            <div class="founders-perks">
+                <div class="perk-item">
+                    <span class="perk-icon">🎖️</span>
+                    <div class="perk-content">
+                        <h3>Founder Badge</h3>
+                        <p>Permanent "Founding Creator" status on your profile. Stand out from the crowd forever.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <span class="perk-icon">💎</span>
+                    <div class="perk-content">
+                        <h3>Lifetime 70% Revenue Share</h3>
+                        <p>Lock in the industry-leading split forever. Future creators recieve may recieve less. You won't.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <span class="perk-icon">🎤</span>
+                    <div class="perk-content">
+                        <h3>Shape the Product</h3>
+                        <p>Direct line to founders. Your feedback influences the roadmap. Help us build what creators need.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <span class="perk-icon">📢</span>
+                    <div class="perk-content">
+                        <h3>Featured Marketing</h3>
+                        <p>Priority placement in our marketing. Case studies, social proof, press features. We'll promote you.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <span class="perk-icon">⚙️</span>
+                    <div class="perk-content">
+                        <h3>Early Feature Access</h3>
+                        <p>Test new features first. Fan engagement dashboards, voice cloning, custom integrations. You get it before anyone else.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="pricing-container">
+            <h2>Simple, Transparent Pricing</h2>
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>Setup Fee</h3>
+                    <div class="price">£299<span class="price-period">one-time</span></div>
+                    <ul class="pricing-features">
+                        <li>No setup fee for Founding Creators</li>
+						<li>Custom AI twin creation</li>
+                        <li>Personality training</li>
+                        <li>Creator landing page</li>
+                        <li>Unlimited twin updates</li>
+                        <li>Email support</li>
+                    </ul>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <span class="featured-badge">💰 You Earn</span>
+                    <h3>Fan Subscriptions</h3>
+                    <div class="price">70%<span class="price-period">of £5/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>Fans pay £5/month</li>
+                        <li>You keep £3.50 per fan</li>
+                        <li>We keep £1.50 (30%)</li>
+                        <li>Monthly payouts via Stripe</li>
+                        <li>No hidden fees</li>
+                        <li>Cancel anytime</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Complete Onboarding</h3>
+                    <p>You complete our onboarding questionnaire (2-3hours). Tell us about your personality, expertise, communication style, and experiences.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>We Build Your Twin</h3>
+                    <p>Our AI learns your voice, tone, catchphrases, and knowledge. Review and refine until it's perfect.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Share With Fans</h3>
+                    <p>Get your unique link (personacore.io/your-name). Promote it on social. Superfans subscribe.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Earn Passive Income</h3>
+                    <p>Your twin chats 24/7. You collect 80% monthly. Track everything in your dashboard.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>Ready to Build Your Empire?</h2>
+            <p>Join the first creators turning influence into income</p>
+            <a href="/onboard" class="cta-button-dark">Apply Now - Only 3 spots available →</a>
+            <p class="spots-remaining">⏰ Founding creator benefits closing soon</p>
+        </div>
+    </section>
+</body>
+</html>

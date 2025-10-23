@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PersonaCore - AI Digital Twins</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f7f7f8;
+            margin: 0;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Improved header, main, footer styling */
+        header { 
+            position: sticky; 
+            top: 0; 
+            background: #fff; 
+            border-bottom: 1px solid #eee; 
+            z-index: 10; 
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        header strong {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+
+        main { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 40px 20px;
+            min-height: 60vh;
+        }
+
+        footer { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: #444;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 2rem 0 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .cta-section {
+            text-align: center;
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin: 3rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Make the chatbot properly sized and positioned */
+        #chat-mount {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: min(380px, 90vw);
+            height: min(500px, 70vh);
+            z-index: 1000;
+        }
+
+        .widget-container {
+            width: 100%;
+            height: 100%;
+            max-width: 380px;
+            max-height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .header-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header-info p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f7f7f8;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message.assistant .message-bubble {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .typing-indicator.active { display: block; }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            font-size: 20px;
+        }
+
+        .send-button:hover { transform: scale(1.05); }
+        .send-button:active { transform: scale(0.95); }
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Branding Footer */
+        .branding-footer {
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 11px;
+            color: #86868b;
+            border-top: 1px solid #e5e5e5;
+            background: white;
+        }
+
+        .branding-link {
+            text-decoration: none;
+            color: #86868b;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .branding-link:hover {
+            color: #667eea;
+        }
+
+        .powered-text {
+            font-size: 10px;
+        }
+
+        .brand-logo {
+            height: 16px;
+            width: auto;
+            vertical-align: middle;
+        }
+
+        /* Improved mobile responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            #chat-mount { 
+                width: 90vw;
+                height: 60vh;
+                bottom: 10px;
+                right: 5vw;
+            }
+            
+            main {
+                padding: 20px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .widget-container {
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <img src="assets/personalogo.png" alt="Logo" class="navbar-logo">
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <img src="assets/personalogo.png" alt="Logo" class="hero-logo">
+    
+    <main>
+        <div class="hero">
+            <h1>Welcome to PersonaCore</h1>
+            <p>Create your perfect AI digital twin for personalized interactions and natural conversations.</p>
+        </div>
+        
+        <section class="features">
+            <div class="feature-card">
+                <h3>Custom AI Personalities</h3>
+                <p>Design unique AI personalities that match your brand voice or personal preferences with our intuitive tools.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>24/7 Availability</h3>
+                <p>Your AI twins never sleep, providing consistent engagement and support to users around the clock.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Natural Conversations</h3>
+                <p>Advanced language models enable fluid, contextual conversations that feel genuinely human.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2>How It Works</h2>
+            <p>PersonaCore uses cutting-edge AI technology to create digital twins that can represent individuals, brands, or fictional characters. Our platform allows you to train these AI personalities on specific knowledge bases and conversation styles.</p>
+            <p>Whether you need customer service agents, virtual assistants, or interactive characters, PersonaCore delivers authentic conversational experiences.</p>
+        </section>
+        
+        <div class="cta-section">
+            <h2>Ready to Create Your AI Twin?</h2>
+            <p>Start with our MovieTwin chatbot to experience the technology, then explore creating your own custom AI personalities.</p>
+            <a href="#" class="cta-button">Get Started Today</a>
+        </div>
+    </main>
+    
+    <footer>
+        <p>© 2023 PersonaCore. All rights reserved.</p>
+        <p>AI Digital Twin Technology</p>
+    </footer>
+    
+    <div id="chat-mount">
+        <div class="widget-container">
+            <div class="chat-header">
+                <div class="avatar">🎬</div>
+                <div class="header-info">
+                    <h3>MovieTwin</h3>
+                    <p>Online now</p>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant">
+                    <div class="message-bubble">
+                        Ready to chat about films? Ask me anything and I'll give you the full scoop with streaming info and ratings! 🎬
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="messageInput" 
+                    placeholder="Ask about any film..."
+                    autocomplete="off"
+                >
+                <button class="send-button" id="sendButton">➤</button>
+            </div>
+
+            <!-- Powered by Persona Core Footer -->
+            <div class="branding-footer">
+                <a href="https://personacore.io" target="_blank" class="branding-link">
+                    <span class="powered-text">Powered by</span>
+                    <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" alt="Persona Core" class="brand-logo">
+                </a>
+            </div>
+        </div>
+
+        <script>
+            // ============ CONFIGURATION ============
+            const CONFIG = {
+                apiUrl: 'https://movietwin-chat.pwigglesworth-cloudflare.workers.dev/chat',
+                twinId: 'movietwin_original',
+                userId: 'anonymous'
+            };
+
+            // ============ STATE ============
+            let conversationHistory = [];
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            // ============ FUNCTIONS ============
+            function scrollToBottom() {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function addMessage(role, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${role}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                bubble.textContent = content;
+                
+                messageDiv.appendChild(bubble);
+                messagesContainer.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function setTyping(isTyping) {
+                let indicator = document.getElementById('typingIndicator');
+                
+                if (isTyping && !indicator) {
+                    indicator = document.createElement('div');
+                    indicator.id = 'typingIndicator';
+                    indicator.className = 'typing-indicator active';
+                    indicator.innerHTML = '<span></span><span></span><span></span>';
+                    messagesContainer.appendChild(indicator);
+                } else if (!isTyping && indicator) {
+                    indicator.remove();
+                }
+                
+                scrollToBottom();
+            }
+
+            async function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+
+                // Disable input
+                messageInput.disabled = true;
+                sendButton.disabled = true;
+
+                // Add user message
+                addMessage('user', message);
+                conversationHistory.push({ role: 'user', content: message });
+                messageInput.value = '';
+
+                // Show typing
+                setTyping(true);
+
+                try {
+                    const response = await fetch(CONFIG.apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            messages: conversationHistory,
+                            twinId: CONFIG.twinId,
+                            userId: CONFIG.userId
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    const reply = data.reply || "Sorry luv, something went wrong.";
+
+                    // Hide typing and add response
+                    setTyping(false);
+                    addMessage('assistant', reply);
+                    conversationHistory.push({ role: 'assistant', content: reply });
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    setTyping(false);
+                    addMessage('assistant', "Having a bit of technical trouble, mate. Give it another go in a sec!");
+                } finally {
+                    // Re-enable input
+                    messageInput.disabled = false;
+                    sendButton.disabled = false;
+                    messageInput.focus();
+                }
+            }
+
+            // ============ EVENT LISTENERS ============
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            // Focus input on load
+            messageInput.focus();
+        </script>
+    </div>
+</body>
+</html>
+    

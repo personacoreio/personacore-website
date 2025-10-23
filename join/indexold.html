@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Creator - Persona Core</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #1d1d1f;
+            background: #f5f5f7;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e5e7;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 30px;
+            width: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 140px 20px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            opacity: 0.95;
+        }
+
+        .creator-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Pricing section - completely separate from hero */
+        .pricing-section {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1d1d1f;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #86868b;
+            margin-bottom: 50px;
+        }
+
+        .signup-card {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 1px solid #f0f0f0;
+        }
+
+        .pricing-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .price-period {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .features {
+            padding: 20px 30px;
+            background: #f5f5f7;
+            text-align: center;
+        }
+
+        .features ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .features li {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .features li:before {
+            content: "✓ ";
+            font-weight: 700;
+        }
+
+        .form-section {
+            padding: 40px;
+            border-radius: 0 0 24px 24px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e5e5e7;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .payment-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 16px;
+            margin: 30px 0;
+            border: 2px solid #e5e5e7;
+        }
+
+        .payment-section h3 {
+            margin-bottom: 15px;
+            color: #1d1d1f;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #86868b;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .security {
+            text-align: center;
+            margin-top: 20px;
+            color: #86868b;
+            font-size: 0.9rem;
+        }
+
+        .security:before {
+            content: "🔒 ";
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #fcc;
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #363;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #cfc;
+            display: none;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .signup-card {
+                margin: 0 20px;
+                border-radius: 20px;
+            }
+            
+            .form-section {
+                padding: 30px 25px;
+                border-radius: 0 0 20px 20px;
+            }
+
+            .pricing-header {
+                border-radius: 20px 20px 0 0;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+    <!-- Include Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" alt="Persona Core" class="logo">
+            <div>
+                <a href="https://personacore.io" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">
+                    ← Back to Persona Core
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section - Just the creator intro -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 id="creator-name">Chat with Creator</h1>
+            <div class="creator-badge" id="creator-badge">AI Twin</div>
+            <p id="creator-description">Get 24/7 access to personalized conversations</p>
+        </div>
+    </section>
+
+    <!-- Separate Pricing & Signup Section -->
+    <section class="pricing-section">
+        <div class="pricing-container">
+            <h2 class="section-title">Start Chatting Today</h2>
+            <p class="section-subtitle">Join thousands of fans chatting with AI twins</p>
+            
+            <div class="signup-card">
+                <!-- Pricing Header -->
+                <div class="pricing-header">
+                    <div class="price">£5</div>
+                    <div class="price-period">per month</div>
+                </div>
+
+                <!-- Features -->
+                <div class="features">
+                    <ul>
+                        <li>1,000 messages/month</li>
+                        <li>24/7 access</li>
+                        <li>Cancel anytime</li>
+                    </ul>
+                </div>
+
+                <!-- Messages -->
+                <div class="error-message" id="error-message"></div>
+                <div class="success-message" id="success-message"></div>
+
+                <!-- Signup Form -->
+                <div class="form-section">
+                    <form id="fan-signup-form">
+                        <div class="form-group">
+                            <label for="fan-email">Email Address</label>
+                            <input type="email" id="fan-email" class="form-input" placeholder="your.email@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fan-username">Username</label>
+                            <input type="text" id="fan-username" class="form-input" placeholder="Choose a username (letters, numbers, _- only)" required>
+                            <small style="color: #86868b; font-size: 0.8rem;">No spaces allowed. Only letters, numbers, hyphens, and underscores.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fan-password">Password</label>
+                            <input type="password" id="fan-password" class="form-input" placeholder="Create a secure password" required>
+                        </div>
+
+                        <!-- Payment Section -->
+                        <div class="payment-section">
+                            <h3>Payment Method</h3>
+                            <div style="text-align: center; color: #86868b; padding: 20px; background: white; border-radius: 8px;">
+                                Secure payment handled by Stripe
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            Start Chatting - £5/month
+                        </button>
+
+                        <div class="security">
+                            Secure payment powered by Stripe
+                        </div>
+
+                        <div class="login-link">
+                            Already have an account? <a href="#" id="login-link">Sign in</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Initialize Supabase - REPLACE WITH YOUR ACTUAL CREDENTIALS
+        const supabaseUrl = 'https://hmcartafonsppirzmtoq.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Get creator slug from URL
+        function getCreatorSlugFromURL() {
+            const path = window.location.pathname; // "/join/movietwin"
+            const parts = path.split('/');
+            return parts[2]; // "movietwin" - returns undefined if no slug
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            document.getElementById('success-message').style.display = 'none';
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successEl = document.getElementById('success-message');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+        }
+
+        // Set loading state
+        function setLoading(loading) {
+            const btn = document.getElementById('submit-btn');
+            const form = document.getElementById('fan-signup-form');
+            
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = 'Processing...';
+                form.classList.add('loading');
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = 'Start Chatting - £5/month';
+                form.classList.remove('loading');
+            }
+        }
+
+        // Load creator data
+        async function loadCreatorData() {
+            const creatorSlug = getCreatorSlugFromURL();
+            
+            if (!creatorSlug) {
+                showError('Invalid creator link. Please check the URL and try again.');
+                return null;
+            }
+
+            try {
+                // Get creator details from database
+                const { data: creator, error } = await supabase
+                    .from('creators')
+                    .select('display_name, subscription_price_id, bio, slug')
+                    .eq('slug', creatorSlug)
+                    .single();
+
+                if (error) throw error;
+                if (!creator) throw new Error('Creator not found');
+
+                // Update page with creator data
+                document.getElementById('creator-name').textContent = `Chat with ${creator.display_name}`;
+                document.getElementById('creator-badge').textContent = `AI Twin of ${creator.display_name}`;
+                
+                if (creator.bio) {
+                    document.getElementById('creator-description').textContent = creator.bio;
+                }
+
+                // Also update the pricing section title
+                document.querySelector('.section-title').textContent = `Chat with ${creator.display_name}'s AI Twin`;
+
+                return creator;
+
+            } catch (error) {
+                console.error('Error loading creator:', error);
+                showError('Creator not found. This creator may not exist or hasn\'t set up their AI twin yet.');
+                return null;
+            }
+        }
+
+        // Form submission
+        document.getElementById('fan-signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            setLoading(true);
+            showError('');
+            showSuccess('');
+
+            const email = document.getElementById('fan-email').value;
+            const username = document.getElementById('fan-username').value;
+            const password = document.getElementById('fan-password').value;
+            const creator = window.creatorData;
+
+            if (!creator) {
+                showError('Creator data not loaded. Please refresh the page.');
+                setLoading(false);
+                return;
+            }
+
+            // Validate username format
+            if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+                showError('Username can only contain letters, numbers, hyphens, and underscores. No spaces allowed.');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                // Check username availability
+                const { data: available, error: availabilityError } = await supabase.rpc('check_username_available', {
+                    desired_username: username
+                });
+
+                if (availabilityError) throw availabilityError;
+                if (!available.available) {
+                    showError('Username not available. Please choose another.');
+                    setLoading(false);
+                    return;
+                }
+
+                // Create fan account
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email, 
+                    password,
+                    options: { 
+                        data: { 
+                            username: username,
+                            name: username 
+                        }
+                    }
+                });
+
+                if (authError) throw authError;
+
+                // Create Stripe checkout session via Cloudflare Function
+				const response = await fetch('/api/create-checkout-session', {
+				method: 'POST',
+				headers: {
+				'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					price_id: creator.subscription_price_id,
+					fan_id: authData.user.id,
+					creator_slug: creator.slug,
+					success_url: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+					cancel_url: `${window.location.origin}/join/${creator.slug}`
+				})
+			});
+
+const checkoutData = await response.json();
+if (!response.ok) {
+  throw new Error(checkoutData.error);
+}
+
+                if (checkoutError) throw checkoutError;
+
+                // Redirect to Stripe Checkout
+                window.location.href = checkoutData.url;
+
+            } catch (error) {
+                console.error('Signup error:', error);
+                showError(error.message || 'Something went wrong. Please try again.');
+                setLoading(false);
+            }
+        });
+
+        // Login link handler
+        document.getElementById('login-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            showError('Please sign up for a new account to subscribe to creators.');
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            const creator = await loadCreatorData();
+            if (creator) {
+                window.creatorData = creator;
+            }
+        });
+    </script>
+</body>
+</html>
