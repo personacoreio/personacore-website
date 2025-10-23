@@ -4,6 +4,3 @@ pages_build_output_dir = "."
 
 [env.production]
 compatibility_flags = ["nodejs_compat"]
-
-[build]
-command = ""
