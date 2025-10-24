@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - PersonaCore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .logo {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: 800;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .username {
+            color: #666;
+            font-weight: 600;
+        }
+        .logout-btn {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: calc(100vh - 140px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            color: #1a1a1a;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+        .creator-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .creator-item {
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .creator-item:hover {
+            background: #f8f9fa;
+        }
+        .creator-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        .creator-item-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .creator-item-expertise {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        .no-creators {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        /* Chat Container */
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Chat Header */
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+        }
+        .chat-header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+        
+        /* Messages Area */
+        .messages-container {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .message {
+            display: flex;
+            gap: 15px;
+            max-width: 80%;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message.user {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .message.user .message-avatar {
+            background: #e0e0e0;
+            color: #666;
+        }
+        .message-content {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 18px;
+            line-height: 1.6;
+        }
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .message-time {
+            font-size: 0.75em;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+        
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .welcome-message h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        /* Input Area */
+        .input-container {
+            padding: 25px;
+            border-top: 1px solid #e0e0e0;
+            background: #fafafa;
+        }
+        .input-form {
+            display: flex;
+            gap: 15px;
+        }
+        .message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .message-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .send-btn {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Error */
+        .error-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #f44336;
+        }
+        
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 18px;
+            width: fit-content;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/" class="logo">PersonaCore</a>
+        <div class="user-menu">
+            <span class="username" id="currentUsername">Loading...</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>My Creators</h2>
+            <div id="creatorList" class="creator-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading creators...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <div id="chatContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading chat...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Supabase config
+        const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
+        
+        let currentUser = null;
+        let currentCreator = null;
+        let conversations = [];
+        
+        // Get creator slug from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const creatorSlug = urlParams.get('creator');
+        
+        // Initialize
+        async function init() {
+            try {
+                // Check if user is authenticated
+                const sessionResponse = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${getAccessToken()}`
+                    }
+                });
+                
+                if (!sessionResponse.ok) {
+                    // Not authenticated, redirect to login
+                    window.location.href = '/';
+                    return;
+                }
+                
+                currentUser = await sessionResponse.json();
+                document.getElementById('currentUsername').textContent = currentUser.user_metadata?.username || 'User';
+                
+                // Load user's subscribed creators
+                await loadCreators();
+                
+                // If creator specified, load that chat
+                if (creatorSlug) {
+                    await loadChat(creatorSlug);
+                } else if (conversations.length > 0) {
+                    // Load first creator's chat
+                    await loadChat(conversations[0].creator_slug);
+                }
+                
+            } catch (error) {
+                console.error('Init error:', error);
+                showError('Failed to load chat. Please try refreshing.');
+            }
+        }
+        
+        async function loadCreators() {
+            try {
+                // Fetch user's subscriptions with creator info
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/subscriptions?fan_id=eq.${currentUser.id}&status=eq.active&select=*,creators(*)`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${getAccessToken()}`
+                        }
+                    }
+                );
+                
+                if (!response.ok) throw new Error('Failed to load subscriptions');
+                
+                const subscriptions = await response.json();
+                
+                if (subscriptions.length === 0) {
+                    document.getElementById('creatorList').innerHTML = `
+                        <div class="no-creators">
+                            <p>No active subscriptions</p>
+                            <p style="margin-top: 10px; font-size: 0.9em;">
+                                <a href="/" style="color: #667eea;">Browse creators</a>
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                conversations = subscriptions.map(sub => ({
+                    creator_id: sub.creators.id,
+                    creator_name: sub.creators.name,
+                    creator_slug: sub.creators.slug,
+                    creator_expertise: sub.creators.expertise
+                }));
+                
+                renderCreatorList();
+                
+            } catch (error) {
+                console.error('Load creators error:', error);
+                document.getElementById('creatorList').innerHTML = `
+                    <div class="error-message">Failed to load creators</div>
+                `;
+            }
+        }
+        
+        function renderCreatorList() {
+            const listHtml = conversations.map(conv => `
+                <div class="creator-item ${conv.creator_slug === currentCreator?.slug ? 'active' : ''}"
+                     onclick="loadChat('${conv.creator_slug}')">
+                    <div class="creator-item-name">${conv.creator_name}</div>
+                    <div class="creator-item-expertise">${Array.isArray(conv.creator_expertise) ? conv.creator_expertise.join(', ') : conv.creator_expertise}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('creatorList').innerHTML = listHtml;
+        }
+        
+        async function loadChat(slug) {
+            const creator = conversations.find(c => c.creator_slug === slug);
+            if (!creator) {
+                showError('Creator not found');
+                return;
+            }
+            
+            currentCreator = { ...creator, slug };
+            
+            // Update URL without reload
+            window.history.pushState({}, '', `/chat?creator=${slug}`);
+            
+            // Update active state in sidebar
+            renderCreatorList();
+            
+            // Render chat interface
+            document.getElementById('chatContent').innerHTML = `
+                <div class="chat-header">
+                    <h1>${creator.creator_name}</h1>
+                    <p>${Array.isArray(creator.creator_expertise) ? creator.creator_expertise.join(' • ') : creator.creator_expertise}</p>
+                </div>
+                <div class="messages-container" id="messagesContainer">
+                    <div class="welcome-message">
+                        <h2>👋 Welcome!</h2>
+                        <p>Start chatting with ${creator.creator_name}</p>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <form class="input-form" onsubmit="sendMessage(event)">
+                        <input 
+                            type="text" 
+                            class="message-input" 
+                            id="messageInput"
+                            placeholder="Type your message..."
+                            required
+                        />
+                        <button type="submit" class="send-btn" id="sendBtn">Send</button>
+                    </form>
+                </div>
+            `;
+            
+            // Load message history
+            await loadMessages();
+        }
+        
+        async function loadMessages() {
+            // TODO: Load actual messages from database
+            // For now, just clear the welcome message
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
+        }
+        
+        async function sendMessage(event) {
+            event.preventDefault();
+            
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to UI
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // TODO: Send message to AI and get response
+            // For now, simulate a response
+            setTimeout(() => {
+                hideTyping();
+                addMessage("Thanks for your message! I'm still learning to respond. Check back soon!", 'creator');
+            }, 2000);
+        }
+        
+        function addMessage(text, type) {
+            const container = document.getElementById('messagesContainer');
+            const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${type}`;
+            messageEl.innerHTML = `
+                <div class="message-avatar">${type === 'user' ? 'U' : currentCreator.creator_name[0]}</div>
+                <div>
+                    <div class="message-content">${text}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            container.appendChild(messageEl);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function showTyping() {
+            const container = document.getElementById('messagesContainer');
+            const typingEl = document.createElement('div');
+            typingEl.id = 'typingIndicator';
+            typingEl.className = 'message creator';
+            typingEl.innerHTML = `
+                <div class="message-avatar">${currentCreator.creator_name[0]}</div>
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            container.appendChild(typingEl);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+        
+        function showError(message) {
+            document.getElementById('chatContent').innerHTML = `
+                <div class="error-message">
+                    <h2>⚠️ Error</h2>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        function getAccessToken() {
+            // Get token from URL hash (from magic link)
+            const hash = window.location.hash;
+            if (hash) {
+                const params = new URLSearchParams(hash.substring(1));
+                const token = params.get('access_token');
+                if (token) {
+                    localStorage.setItem('access_token', token);
+                    // Clean URL
+                    window.history.replaceState({}, '', window.location.pathname + window.location.search);
+                    return token;
+                }
+            }
+            return localStorage.getItem('access_token');
+        }
+        
+        window.logout = async function() {
+            localStorage.removeItem('access_token');
+            window.location.href = '/';
+        };
+        
+        window.loadChat = loadChat;
+        window.sendMessage = sendMessage;
+        
+        // Start
+        init();
+    </script>
+</body>
+</html>
