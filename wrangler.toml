@@ -4,6 +4,3 @@ pages_build_output_dir = "."
 
 [env.production]
 compatibility_flags = ["nodejs_compat"]
-
-[env.production.vars]
-SUPABASE_URL = "https://hmcartafonsppirzmtoq.supabase.co"

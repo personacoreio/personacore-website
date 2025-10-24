@@ -54,11 +54,6 @@ export async function onRequestPost(context) {
       
       console.log('Found creator:', creator.name);
       
-      // Debug: Check if env vars are set
-      console.log('Supabase URL:', env.SUPABASE_URL);
-      console.log('Service role key exists:', !!env.SUPABASE_SERVICE_ROLE_KEY);
-      console.log('Service role key length:', env.SUPABASE_SERVICE_ROLE_KEY?.length);
-      
       // 2. Double-check username is still available (race condition protection)
       const { data: existingUsername } = await supabase
         .from('fans')
@@ -82,8 +77,6 @@ export async function onRequestPost(context) {
         console.log('User already exists:', userId);
       } else {
         // Create new auth user
-        console.log('Attempting to create user with email:', fanEmail);
-        
         const { data: newUser, error: authError } = await supabase.auth.admin.createUser({
           email: fanEmail,
           email_confirm: true, // Auto-confirm for now
@@ -93,15 +86,8 @@ export async function onRequestPost(context) {
           }
         });
         
-        console.log('Create user result:', { 
-          success: !!newUser, 
-          hasError: !!authError,
-          errorDetails: authError 
-        });
-        
         if (authError) {
-          console.error('Auth error details:', JSON.stringify(authError));
-          throw new Error(`Failed to create user: ${authError.message || authError.error_description || JSON.stringify(authError)}`);
+          throw new Error(`Failed to create user: ${authError.message}`);
         }
         
         userId = newUser.user.id;
@@ -127,19 +113,6 @@ export async function onRequestPost(context) {
       console.log('Created fan with username:', username);
       
       // 5. Create subscription record
-      // Get actual subscription object from Stripe for accurate dates
-      const stripeSubscription = session.subscription ? 
-        await (async () => {
-          try {
-            const Stripe = (await import('stripe')).default;
-            const stripe = new Stripe(env.STRIPE_SECRET_KEY);
-            return await stripe.subscriptions.retrieve(session.subscription);
-          } catch (e) {
-            console.error('Failed to retrieve subscription:', e);
-            return null;
-          }
-        })() : null;
-      
       const { data: subscription, error: subError } = await supabase
         .from('subscriptions')
         .insert({
@@ -150,12 +123,8 @@ export async function onRequestPost(context) {
           amount: 5.00,
           currency: 'GBP',
           status: 'active',
-          current_period_start: stripeSubscription ? 
-            new Date(stripeSubscription.current_period_start * 1000).toISOString() :
-            new Date().toISOString(),
-          current_period_end: stripeSubscription ?
-            new Date(stripeSubscription.current_period_end * 1000).toISOString() :
-            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
         })
         .select()
         .single();
