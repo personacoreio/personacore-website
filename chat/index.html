@@ -340,12 +340,14 @@
     </div>
     
     <script type="module">
-        // Supabase config
+        // Configuration
         const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
+        const CHAT_API_URL = 'https://personacore-chat.pwigglesworth-cloudflare.workers.dev/api/chat';
         
         let currentUser = null;
         let currentCreator = null;
+        let currentConversationId = null;
         let conversations = [];
         
         // Get creator slug from URL
@@ -456,6 +458,28 @@
             
             currentCreator = { ...creator, slug };
             
+            // Get or create conversation ID
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/conversations?fan_id=eq.${currentUser.id}&creator_id=eq.${creator.creator_id}&select=id`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${getAccessToken()}`
+                        }
+                    }
+                );
+                
+                if (response.ok) {
+                    const convs = await response.json();
+                    if (convs && convs.length > 0) {
+                        currentConversationId = convs[0].id;
+                    }
+                }
+            } catch (error) {
+                console.error('Error getting conversation:', error);
+            }
+            
             // Update URL without reload
             window.history.pushState({}, '', `/chat?creator=${slug}`);
             
@@ -488,56 +512,148 @@
                 </div>
             `;
             
-            // Load message history
+            // Load message history from worker
             await loadMessages();
         }
         
         async function loadMessages() {
-            // TODO: Load actual messages from database
-            // For now, just clear the welcome message
-            const container = document.getElementById('messagesContainer');
-            container.innerHTML = '';
+            if (!currentConversationId) {
+                // No messages yet, show welcome
+                return;
+            }
+            
+            try {
+                // Get messages from Supabase directly
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/messages?conversation_id=eq.${currentConversationId}&order=created_at.asc&select=role,content,created_at`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${getAccessToken()}`
+                        }
+                    }
+                );
+                
+                if (!response.ok) {
+                    console.error('Failed to load messages');
+                    return;
+                }
+                
+                const messages = await response.json();
+                const container = document.getElementById('messagesContainer');
+                container.innerHTML = '';
+                
+                if (messages && messages.length > 0) {
+                    messages.forEach(msg => {
+                        addMessageToUI(msg.content, msg.role === 'user' ? 'user' : 'creator', msg.created_at);
+                    });
+                } else {
+                    // Show welcome message if no messages yet
+                    container.innerHTML = `
+                        <div class="welcome-message">
+                            <h2>👋 Welcome!</h2>
+                            <p>Start chatting with ${currentCreator.creator_name}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
         }
         
         async function sendMessage(event) {
             event.preventDefault();
             
             const input = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
             const message = input.value.trim();
             
             if (!message) return;
             
-            // Add user message to UI
-            addMessage(message, 'user');
+            // Disable input while sending
+            input.disabled = true;
+            sendBtn.disabled = true;
+            
+            // Add user message to UI immediately
+            addMessageToUI(message, 'user');
             input.value = '';
             
             // Show typing indicator
             showTyping();
             
-            // TODO: Send message to AI and get response
-            // For now, simulate a response
-            setTimeout(() => {
+            try {
+                // Generate conversation ID if not exists
+                if (!currentConversationId) {
+                    currentConversationId = crypto.randomUUID();
+                }
+                
+                // Send message to worker API
+                const response = await fetch(CHAT_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        creatorSlug: currentCreator.slug,
+                        fanId: currentUser.id,
+                        conversationId: currentConversationId
+                    })
+                });
+                
                 hideTyping();
-                addMessage("Thanks for your message! I'm still learning to respond. Check back soon!", 'creator');
-            }, 2000);
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to send message');
+                }
+                
+                const data = await response.json();
+                
+                // Add AI response to UI
+                addMessageToUI(data.reply, 'creator');
+                
+            } catch (error) {
+                hideTyping();
+                console.error('Send message error:', error);
+                addMessageToUI('Sorry, I had trouble responding. Please try again.', 'creator');
+            } finally {
+                // Re-enable input
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
+            }
         }
         
-        function addMessage(text, type) {
+        function addMessageToUI(text, type, timestamp = null) {
             const container = document.getElementById('messagesContainer');
-            const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            // Remove welcome message if it exists
+            const welcome = container.querySelector('.welcome-message');
+            if (welcome) welcome.remove();
+            
+            const time = timestamp 
+                ? new Date(timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                : new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             
             const messageEl = document.createElement('div');
             messageEl.className = `message ${type}`;
             messageEl.innerHTML = `
                 <div class="message-avatar">${type === 'user' ? 'U' : currentCreator.creator_name[0]}</div>
                 <div>
-                    <div class="message-content">${text}</div>
+                    <div class="message-content">${escapeHtml(text)}</div>
                     <div class="message-time">${time}</div>
                 </div>
             `;
             
             container.appendChild(messageEl);
             container.scrollTop = container.scrollHeight;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/\n/g, '<br>');
         }
         
         function showTyping() {
