@@ -26,11 +26,11 @@ export async function onRequestPost(context) {
           quantity: 1,
         },
       ],
-      success_url: `https://personacore.io/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://personacore.io/join/${creator_slug}`,
+      success_url: `${env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.BASE_URL}/join/${creator_slug}`,
       metadata: {
         creator_slug: creator_slug,
-        username: username,
+        username: username,  // NEW: Pass username to webhook
       },
     });
 

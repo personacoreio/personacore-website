@@ -279,6 +279,7 @@
                         placeholder="e.g. johndoe123"
                         autocomplete="off"
                         required
+                        pattern="[a-zA-Z0-9_-]+"
                         minlength="3"
                         maxlength="30"
                     />
@@ -446,15 +447,12 @@
                 return;
             }
             
-            // Format validation - but only show errors after debounce for short usernames
+            // Format validation
             const formatCheck = validateUsernameFormat(username);
             if (!formatCheck.valid) {
-                // Only show error immediately for invalid characters, not for length
-                if (username.length >= 3 || !/^[a-zA-Z0-9_-]+$/.test(username)) {
-                    usernameInput.classList.add('error');
-                    validationMessage.className = 'validation-message error';
-                    validationMessage.textContent = formatCheck.message;
-                }
+                usernameInput.classList.add('error');
+                validationMessage.className = 'validation-message error';
+                validationMessage.textContent = formatCheck.message;
                 return;
             }
             
@@ -504,7 +502,7 @@
                     body: JSON.stringify({
                         price_id: creatorData.subscription_price_id,
                         creator_slug: creatorData.slug,
-                        username: username
+                        username: username  // NEW: Pass username
                     })
                 });
                 

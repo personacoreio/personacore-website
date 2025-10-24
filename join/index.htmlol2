@@ -279,6 +279,7 @@
                         placeholder="e.g. johndoe123"
                         autocomplete="off"
                         required
+                        pattern="[a-zA-Z0-9_-]+"
                         minlength="3"
                         maxlength="30"
                     />
@@ -504,7 +505,7 @@
                     body: JSON.stringify({
                         price_id: creatorData.subscription_price_id,
                         creator_slug: creatorData.slug,
-                        username: username
+                        username: username  // NEW: Pass username
                     })
                 });
                 
