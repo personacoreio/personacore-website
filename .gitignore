@@ -1,2 +1,6 @@
 functions/node_modules/
 functions/package-lock.json
+*.ol*
+*.back
+*.backup
+*.bak.*

@@ -295,14 +295,34 @@
             `;
             
             try {
-                // Load all analytics data
-                const [summary, topFans, trendingTopics, contentGaps, dailyCosts] = await Promise.all([
-                    getDashboardSummary(creatorSlug),
-                    getTopFans(creatorSlug),
-                    getTrendingTopics(creatorSlug),
-                    getContentGaps(creatorSlug),
-                    getDailyCosts(creatorSlug)
-                ]);
+                // Load all analytics data (with graceful failure handling)
+                const summary = await getDashboardSummary(creatorSlug);
+                
+                let topFans = [], trendingTopics = [], contentGaps = [], dailyCosts = [];
+                
+                try {
+                    topFans = await getTopFans(creatorSlug);
+                } catch (e) {
+                    console.warn('Failed to load top fans:', e);
+                }
+                
+                try {
+                    trendingTopics = await getTrendingTopics(creatorSlug);
+                } catch (e) {
+                    console.warn('Failed to load trending topics:', e);
+                }
+                
+                try {
+                    contentGaps = await getContentGaps(creatorSlug);
+                } catch (e) {
+                    console.warn('Failed to load content gaps:', e);
+                }
+                
+                try {
+                    dailyCosts = await getDailyCosts(creatorSlug);
+                } catch (e) {
+                    console.warn('Failed to load daily costs:', e);
+                }
                 
                 renderDashboard(summary, topFans, trendingTopics, contentGaps, dailyCosts);
                 
@@ -318,22 +338,54 @@
         }
         
         async function getDashboardSummary(creatorSlug) {
-            const response = await fetch(
-                `${SUPABASE_URL}/rest/v1/rpc/get_creator_dashboard`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ creator_slug_param: creatorSlug })
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/rpc/get_creator_dashboard`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'params=single-object'
+                        },
+                        body: JSON.stringify({ creator_slug_param: creatorSlug })
+                    }
+                );
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('RPC Error:', response.status, errorText);
+                    throw new Error(`Failed to load summary: ${response.status} - ${errorText}`);
                 }
-            );
-            
-            if (!response.ok) throw new Error('Failed to load summary');
-            const data = await response.json();
-            return data[0] || {};
+                
+                const data = await response.json();
+                console.log('Dashboard data:', data);
+                
+                // Handle both array and single object response
+                return Array.isArray(data) ? (data[0] || {}) : (data || {});
+            } catch (error) {
+                console.error('getDashboardSummary error:', error);
+                // Return empty object so dashboard can still load
+                return {
+                    total_fans: 0,
+                    active_conversations: 0,
+                    total_messages: 0,
+                    messages_today: 0,
+                    avg_messages_per_fan: 0,
+                    most_active_fan_username: 'N/A',
+                    most_active_fan_message_count: 0,
+                    total_cost_gbp: 0,
+                    cost_this_month_gbp: 0,
+                    avg_cost_per_message: 0,
+                    monthly_revenue_gbp: 0,
+                    monthly_profit_gbp: 0,
+                    top_topic_1: 'N/A',
+                    top_topic_2: 'N/A',
+                    top_topic_3: 'N/A',
+                    questions_needing_content: 0
+                };
+            }
         }
         
         async function getTopFans(creatorSlug) {
