@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscribe to [Creator Name] - PersonaCore</title>
+    <title>Join PersonaCore</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -82,6 +82,19 @@
             line-height: 1.6;
             opacity: 0.95;
         }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .info-box p {
+            color: #1565c0;
+            margin: 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
         .pricing {
             background: #f8f9fa;
             padding: 25px;
@@ -137,18 +150,6 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .info-box p {
-            color: #1565c0;
-            margin: 0;
-            font-size: 0.95em;
-        }
         .error {
             background: #f8d7da;
             color: #721c24;
@@ -198,7 +199,7 @@
             </div>
             
             <div class="info-box">
-                <p><strong>📧 Easy signup:</strong> Just enter your email and we'll create your account. Your username will be auto-generated from your email (e.g., sarah_4729). You can change it later in settings!</p>
+                <p><strong>📧 Simple signup:</strong> Click subscribe and enter your email. We'll auto-generate a username from your email (e.g., sarah_4729). You can change it later in settings!</p>
             </div>
             
             <div class="pricing">
@@ -230,9 +231,9 @@
     </div>
     
     <script type="module">
-        // Get creator slug from URL: /join/horror-queen-elara
+        // Get creator slug from URL
         const pathParts = window.location.pathname.split('/').filter(p => p);
-        const creatorSlug = pathParts[pathParts.length - 1]; // Last part of path
+        const creatorSlug = pathParts[1]; // /join/creator-slug -> creator-slug
         
         // Supabase config
         const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
@@ -312,7 +313,7 @@
             errorDiv.style.display = 'block';
         }
         
-        // Subscribe button handler
+        // Subscribe button handler - matches your original working code
         document.getElementById('subscribeBtn').addEventListener('click', async () => {
             if (!creatorData) return;
             
@@ -320,38 +321,33 @@
             const errorDiv = document.getElementById('error');
             
             btn.disabled = true;
-            btn.textContent = 'Creating checkout...';
+            btn.textContent = 'Processing...';
             errorDiv.style.display = 'none';
             
+            const fanId = crypto.randomUUID();
+            
             try {
-                // Create Stripe checkout session
-                // No username needed - webhook will auto-generate from email
-                const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+                // Call your Cloudflare Function
+                const response = await fetch('/create-checkout-session', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${window.STRIPE_PUBLISHABLE_KEY}`,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        'mode': 'subscription',
-                        'line_items[0][price]': creatorData.subscription_price_id,
-                        'line_items[0][quantity]': '1',
-                        'success_url': `https://personacore.io/chat?creator=${creatorData.slug}&success=true`,
-                        'cancel_url': `https://personacore.io/join/${creatorData.slug}`,
-                        'metadata[creator_slug]': creatorData.slug,
-                        'allow_promotion_codes': 'true'
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        price_id: creatorData.subscription_price_id,
+                        fan_id: fanId,
+                        creator_slug: creatorData.slug
                     })
                 });
                 
                 if (!response.ok) {
-                    throw new Error('Failed to create checkout session');
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to create checkout session');
                 }
                 
-                const session = await response.json();
+                const data = await response.json();
                 
-                if (session.url) {
+                if (data.url) {
                     // Redirect to Stripe checkout
-                    window.location.href = session.url;
+                    window.location.href = data.url;
                 } else {
                     throw new Error('No checkout URL received');
                 }
