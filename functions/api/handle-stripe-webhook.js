@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js'
 export async function onRequestPost(context) {
   const { request, env } = context;
   
+  console.log('🔔 Webhook received at:', new Date().toISOString());
+  
   const sig = request.headers.get('stripe-signature');
   const body = await request.text();
   
@@ -12,15 +14,16 @@ export async function onRequestPost(context) {
   let event;
   try {
     event = JSON.parse(body);
+    console.log('✅ Event parsed:', event.type);
   } catch (err) {
-    console.error('Webhook JSON parse error:', err);
+    console.error('❌ Webhook JSON parse error:', err);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
-  console.log('Stripe webhook received:', event.type);
-
   try {
     if (event.type === 'checkout.session.completed') {
+      console.log('💳 Processing checkout.session.completed');
+      
       const session = event.data.object;
       
       // Get metadata
@@ -28,7 +31,9 @@ export async function onRequestPost(context) {
       const creatorSlug = session.metadata?.creator_slug;
       const subscriptionId = session.subscription;
       
-      console.log('Processing subscription:', { fanEmail, creatorSlug, subscriptionId });
+      console.log('📧 Fan email:', fanEmail);
+      console.log('🎭 Creator slug:', creatorSlug);
+      console.log('📝 Subscription ID:', subscriptionId);
       
       if (!fanEmail || !creatorSlug) {
         throw new Error('Missing email or creator_slug in session');
@@ -39,13 +44,27 @@ export async function onRequestPost(context) {
       const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4 digits
       const username = `${baseUsername}_${randomSuffix}`;
       
+      console.log('👤 Generated username:', username);
+      
+      // Check environment variables
+      console.log('🔑 Checking env vars...');
+      console.log('SUPABASE_URL exists:', !!env.SUPABASE_URL);
+      console.log('SUPABASE_SERVICE_ROLE_KEY exists:', !!env.SUPABASE_SERVICE_ROLE_KEY);
+      console.log('RESEND_API_KEY exists:', !!env.RESEND_API_KEY);
+      
+      if (!env.SUPABASE_SERVICE_ROLE_KEY) {
+        throw new Error('SUPABASE_SERVICE_ROLE_KEY not set in environment');
+      }
+      
       // Initialize Supabase with SERVICE ROLE KEY (has admin permissions)
+      console.log('🔌 Initializing Supabase...');
       const supabase = createClient(
         env.SUPABASE_URL,
         env.SUPABASE_SERVICE_ROLE_KEY
       );
       
       // 1. Get creator
+      console.log('🔍 Fetching creator:', creatorSlug);
       const { data: creator, error: creatorError } = await supabase
         .from('creators')
         .select('id, name')
@@ -53,18 +72,14 @@ export async function onRequestPost(context) {
         .single();
 
       if (creatorError || !creator) {
+        console.error('❌ Creator fetch error:', creatorError);
         throw new Error(`Creator not found: ${creatorSlug}`);
       }
       
-      console.log('Found creator:', creator.name);
-      console.log('Auto-generated username:', username);
+      console.log('✅ Found creator:', creator.name, 'ID:', creator.id);
       
-      // Debug: Check if env vars are set
-      console.log('Supabase URL:', env.SUPABASE_URL);
-      console.log('Service role key exists:', !!env.SUPABASE_SERVICE_ROLE_KEY);
-      console.log('Service role key length:', env.SUPABASE_SERVICE_ROLE_KEY?.length);
-      
-      // 3. Create Supabase Auth user (or get existing by email)
+      // 2. Create Supabase Auth user (or get existing by email)
+      console.log('👥 Creating/fetching auth user...');
       let userId;
       
       // Check if user already exists by email
@@ -73,10 +88,9 @@ export async function onRequestPost(context) {
       
       if (userExists) {
         userId = userExists.id;
-        console.log('User already exists:', userId);
+        console.log('✅ User already exists:', userId);
       } else {
-        // Create new auth user
-        console.log('Attempting to create user with email:', fanEmail);
+        console.log('🆕 Creating new auth user...');
         
         // Generate a random password (user won't need it - they'll use magic links)
         const randomPassword = crypto.randomUUID() + crypto.randomUUID();
@@ -91,58 +105,53 @@ export async function onRequestPost(context) {
           }
         });
         
-        console.log('Create user result:', { 
-          success: !!newUser, 
-          hasError: !!authError,
-          errorDetails: authError 
-        });
-        
-        // Supabase sometimes returns success:true AND error:true
-        // If we got user data, consider it successful
         if (authError && !newUser?.user) {
-          console.error('Auth error details:', JSON.stringify(authError));
-          throw new Error(`Failed to create user: ${authError.message || authError.error_description || JSON.stringify(authError)}`);
+          console.error('❌ Auth error:', JSON.stringify(authError));
+          throw new Error(`Failed to create user: ${authError.message || authError.error_description}`);
         }
         
         if (newUser?.user) {
           userId = newUser.user.id;
-          console.log('Created new user:', userId);
+          console.log('✅ Created new user:', userId);
         } else {
           throw new Error('User creation failed: no user data returned');
         }
       }
       
-      // 4. Create or update fan record with username
+      // 3. Create or update fan record with username
+      console.log('💾 Creating fan record...');
       const { error: fanError } = await supabase
         .from('fans')
         .upsert({
           id: userId,
           email: fanEmail,
-          username: username,  // NEW: Store username
-          name: username,      // Use username as display name
+          username: username,
+          name: username,
           status: 'active'
         });
       
       if (fanError) {
-        console.error('Fan upsert error:', fanError);
+        console.error('❌ Fan upsert error:', fanError);
         throw new Error(`Failed to create fan record: ${fanError.message}`);
       }
       
-      console.log('Created fan with username:', username);
+      console.log('✅ Created fan with username:', username);
       
-      // 5. Create subscription record
+      // 4. Create subscription record
+      console.log('📋 Creating subscription record...');
+      
       // Get actual subscription object from Stripe for accurate dates
-      const stripeSubscription = session.subscription ? 
-        await (async () => {
-          try {
-            const Stripe = (await import('stripe')).default;
-            const stripe = new Stripe(env.STRIPE_SECRET_KEY);
-            return await stripe.subscriptions.retrieve(session.subscription);
-          } catch (e) {
-            console.error('Failed to retrieve subscription:', e);
-            return null;
-          }
-        })() : null;
+      let stripeSubscription = null;
+      if (session.subscription && env.STRIPE_SECRET_KEY) {
+        try {
+          const Stripe = (await import('stripe')).default;
+          const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+          stripeSubscription = await stripe.subscriptions.retrieve(session.subscription);
+          console.log('✅ Retrieved Stripe subscription');
+        } catch (e) {
+          console.error('⚠️ Failed to retrieve subscription:', e);
+        }
+      }
       
       const { data: subscription, error: subError } = await supabase
         .from('subscriptions')
@@ -165,12 +174,14 @@ export async function onRequestPost(context) {
         .single();
 
       if (subError) {
+        console.error('❌ Subscription error:', subError);
         throw new Error(`Failed to create subscription: ${subError.message}`);
       }
       
-      console.log('Created subscription:', subscription.id);
+      console.log('✅ Created subscription:', subscription.id);
       
-      // 6. Create conversation
+      // 5. Create conversation
+      console.log('💬 Creating conversation...');
       const { error: convError } = await supabase
         .from('conversations')
         .insert({
@@ -181,11 +192,14 @@ export async function onRequestPost(context) {
         });
 
       if (convError) {
-        console.error('Conversation creation error:', convError);
+        console.error('⚠️ Conversation creation error:', convError);
         // Don't throw - not critical
+      } else {
+        console.log('✅ Created conversation');
       }
       
-      // 7. Send magic link email
+      // 6. Send magic link email
+      console.log('📧 Generating magic link...');
       const { data: magicLinkData, error: magicLinkError } = await supabase.auth.admin.generateLink({
         type: 'magiclink',
         email: fanEmail,
@@ -195,17 +209,14 @@ export async function onRequestPost(context) {
       });
       
       if (magicLinkError) {
-        console.error('Magic link error:', magicLinkError);
+        console.error('❌ Magic link error:', magicLinkError);
       } else {
-        console.log('Magic link generated for:', fanEmail);
+        console.log('✅ Magic link generated');
         
-        // Get the magic link URL
         const magicLinkUrl = magicLinkData?.properties?.action_link;
         
-        if (magicLinkUrl) {
-          console.log('Magic link URL:', magicLinkUrl);
-          
-          // Send email via Resend API
+        if (magicLinkUrl && env.RESEND_API_KEY) {
+          console.log('📮 Sending email via Resend...');
           try {
             const emailResponse = await fetch('https://api.resend.com/emails', {
               method: 'POST',
@@ -241,28 +252,31 @@ export async function onRequestPost(context) {
             });
             
             if (emailResponse.ok) {
-              console.log('Magic link email sent successfully to:', fanEmail);
+              console.log('✅ Magic link email sent successfully');
             } else {
               const emailError = await emailResponse.json();
-              console.error('Failed to send magic link email:', emailError);
+              console.error('❌ Failed to send email:', emailError);
             }
           } catch (emailError) {
-            console.error('Error sending magic link email:', emailError);
+            console.error('❌ Email error:', emailError);
           }
+        } else {
+          console.log('⚠️ Skipping email - missing magic link URL or RESEND_API_KEY');
         }
       }
       
-      // 8. Create payout record
+      // 7. Create payout record
+      console.log('💰 Creating payout record...');
       const subscriptionAmount = 5.00;
-      const payoutAmount = subscriptionAmount * 0.70; // 70% to creator
-      const commissionAmount = subscriptionAmount * 0.30; // 30% platform fee
+      const payoutAmount = subscriptionAmount * 0.70;
+      const commissionAmount = subscriptionAmount * 0.30;
       
       const { error: payoutError } = await supabase
         .from('creator_payouts')
         .insert({
           creator_id: creator.id,
-          payout_amount: payoutAmount, // Required field
-          commission_amount: commissionAmount, // Required field
+          payout_amount: payoutAmount,
+          commission_amount: commissionAmount,
           total_revenue: subscriptionAmount,
           stripe_payment_intent_id: session.payment_intent,
           status: 'pending',
@@ -271,10 +285,14 @@ export async function onRequestPost(context) {
         });
 
       if (payoutError) {
-        console.error('Payout creation error:', payoutError);
+        console.error('⚠️ Payout creation error:', payoutError);
+      } else {
+        console.log('✅ Created payout record');
       }
       
-      console.log('✅ Successfully processed subscription for:', fanEmail, 'username:', username);
+      console.log('🎉 Successfully processed subscription for:', fanEmail, 'username:', username);
+    } else {
+      console.log('ℹ️ Event type not handled:', event.type);
     }
 
     return new Response(JSON.stringify({ received: true }), {
@@ -283,7 +301,8 @@ export async function onRequestPost(context) {
     });
 
   } catch (error) {
-    console.error('❌ Webhook processing error:', error);
+    console.error('💥 Webhook processing error:', error.message);
+    console.error('Stack:', error.stack);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
