@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Chats - PersonaCore</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .header-left h1 {
+            color: #1a1a1a;
+            margin-bottom: 5px;
+            font-size: 2em;
+        }
+        .header-left p {
+            color: #666;
+        }
+        .header-right {
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .subscriptions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .creator-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .creator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+        .creator-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .creator-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin: 0 auto 15px;
+        }
+        .creator-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        .creator-header .expertise {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        .creator-body {
+            padding: 25px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .subscription-info {
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .subscription-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .card-actions .btn {
+            flex: 1;
+            text-align: center;
+            font-size: 0.95em;
+            padding: 14px;
+        }
+        .empty-state {
+            background: white;
+            padding: 60px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .empty-state h2 {
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+        .empty-state p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-right {
+                width: 100%;
+                flex-direction: column;
+            }
+            .subscriptions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>My Chats</h1>
+                <p id="welcome-message">Loading...</p>
+            </div>
+            <div class="header-right">
+                <a href="/settings" class="btn btn-secondary">⚙️ Settings</a>
+                <a href="/" class="btn btn-secondary">🏠 Home</a>
+                <button id="logout-btn" class="btn btn-secondary">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div id="loading-state" class="loading">
+            <div class="spinner"></div>
+            <p>Loading your chats...</p>
+        </div>
+
+        <div id="content-state" style="display: none;">
+            <div id="subscriptions-container" class="subscriptions-grid"></div>
+            
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <h2>No Active Chats Yet</h2>
+                <p>You haven't subscribed to any creators yet. Browse available creators to start chatting!</p>
+                <a href="/#demo" class="btn btn-primary">Explore Creators</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Supabase config
+        const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUser = null;
+
+        async function init() {
+            // Check if user is logged in
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            if (!session) {
+                window.location.href = '/#login';
+                return;
+            }
+            
+            currentUser = session.user;
+            
+            // Get fan data
+            const { data: fan } = await supabaseClient
+                .from('fans')
+                .select('username')
+                .eq('id', currentUser.id)
+                .single();
+            
+            const displayName = fan?.username || currentUser.email.split('@')[0];
+            document.getElementById('welcome-message').textContent = `Welcome back, ${displayName}!`;
+            
+            // Load subscriptions
+            await loadSubscriptions();
+        }
+
+        async function loadSubscriptions() {
+            try {
+                // Get all active subscriptions with creator info and message counts
+                const { data: subscriptions, error } = await supabaseClient
+                    .from('subscriptions')
+                    .select(`
+                        *,
+                        creators (
+                            id,
+                            name,
+                            slug,
+                            expertise,
+                            avatar_url
+                        ),
+                        conversations (
+                            id
+                        )
+                    `)
+                    .eq('fan_id', currentUser.id)
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('content-state').style.display = 'block';
+                
+                if (!subscriptions || subscriptions.length === 0) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    return;
+                }
+                
+                // Get message counts for each conversation
+                const subsWithCounts = await Promise.all(subscriptions.map(async sub => {
+                    const conversationId = sub.conversations?.[0]?.id;
+                    let messageCount = 0;
+                    
+                    if (conversationId) {
+                        const { count } = await supabaseClient
+                            .from('messages')
+                            .select('*', { count: 'exact', head: true })
+                            .eq('conversation_id', conversationId);
+                        messageCount = count || 0;
+                    }
+                    
+                    return { ...sub, messageCount };
+                }));
+                
+                // Display subscription cards
+                const container = document.getElementById('subscriptions-container');
+                container.innerHTML = subsWithCounts.map(sub => createCreatorCard(sub)).join('');
+                
+            } catch (error) {
+                console.error('Error loading subscriptions:', error);
+                document.getElementById('loading-state').innerHTML = 
+                    '<p style="color: #dc3545;">Failed to load subscriptions. Please refresh.</p>';
+            }
+        }
+
+        function createCreatorCard(subscription) {
+            const creator = subscription.creators;
+            const expertise = Array.isArray(creator.expertise) 
+                ? creator.expertise.join(', ') 
+                : creator.expertise || 'Expert';
+            
+            const nextBilling = new Date(subscription.current_period_end).toLocaleDateString();
+            const emoji = getCreatorEmoji(creator.name);
+            
+            return `
+                <div class="creator-card">
+                    <div class="creator-header">
+                        <div class="creator-avatar">${emoji}</div>
+                        <h2>${creator.name}</h2>
+                        <div class="expertise">${expertise}</div>
+                    </div>
+                    
+                    <div class="creator-body">
+                        <div class="stat-row">
+                            <div class="stat">
+                                <div class="stat-value">${subscription.messageCount || 0}</div>
+                                <div class="stat-label">Messages</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">£${subscription.amount.toFixed(2)}</div>
+                                <div class="stat-label">/month</div>
+                            </div>
+                        </div>
+                        
+                        <div class="subscription-info">
+                            <div class="subscription-status">
+                                <span>Status:</span>
+                                <span class="status-badge status-${subscription.status}">${subscription.status}</span>
+                            </div>
+                            <div style="font-size: 0.9em; color: #666;">
+                                Next billing: ${nextBilling}
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <a href="/chat?creator=${creator.slug}" class="btn btn-primary">
+                                💬 Open Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getCreatorEmoji(name) {
+            const lower = name.toLowerCase();
+            if (lower.includes('horror') || lower.includes('elara')) return '🎬';
+            if (lower.includes('fitness') || lower.includes('gym')) return '💪';
+            if (lower.includes('cook') || lower.includes('chef')) return '👨‍🍳';
+            if (lower.includes('music') || lower.includes('dj')) return '🎵';
+            if (lower.includes('art') || lower.includes('paint')) return '🎨';
+            return '🎭';
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = '/';
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
