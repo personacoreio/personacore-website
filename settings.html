@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - PersonaCore</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f7;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #666;
+        }
+        .nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .info-box p {
+            color: #1565c0;
+            margin: 0;
+        }
+        .subscription-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .subscription-card h3 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        .subscription-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/">← Home</a>
+            <a href="/chat">Chat</a>
+        </div>
+
+        <div class="header">
+            <h1>Account Settings</h1>
+            <p id="userEmail">Loading...</p>
+        </div>
+
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading your settings...</p>
+        </div>
+
+        <div id="contentState" style="display: none;">
+            <!-- Profile Section -->
+            <div class="section">
+                <h2>Profile</h2>
+                
+                <div id="profileSuccess" class="success"></div>
+                <div id="profileError" class="error"></div>
+                
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="emailInput" disabled>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 5px;">Contact support to change your email</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="usernameInput" placeholder="Enter new username">
+                    <p style="color: #666; font-size: 0.9em; margin-top: 5px;">Letters, numbers, and underscores only</p>
+                </div>
+                
+                <button id="updateUsernameBtn" class="btn">Update Username</button>
+            </div>
+
+            <!-- Subscriptions Section -->
+            <div class="section">
+                <h2>Subscriptions</h2>
+                
+                <div id="subscriptionsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading subscriptions...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div class="section">
+                <h2>Security</h2>
+                
+                <div class="info-box">
+                    <p><strong>🔐 Passwordless login:</strong> We use magic links sent to your email. No passwords to remember!</p>
+                </div>
+                
+                <button id="sendMagicLinkBtn" class="btn btn-secondary">Send New Magic Link</button>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="section">
+                <h2 style="color: #dc3545;">Danger Zone</h2>
+                
+                <p style="margin-bottom: 15px; color: #666;">Once you delete your account, there is no going back. Please be certain.</p>
+                
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                <button id="deleteAccountBtn" class="btn btn-danger" style="margin-left: 10px;">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Supabase config
+        const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUser = null;
+        let fanData = null;
+
+        async function init() {
+            // Check if user is logged in
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            if (!session) {
+                window.location.href = '/';
+                return;
+            }
+            
+            currentUser = session.user;
+            
+            // Load user data
+            await loadUserData();
+            
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentState').style.display = 'block';
+        }
+
+        async function loadUserData() {
+            try {
+                // Get fan record
+                const { data: fan, error } = await supabaseClient
+                    .from('fans')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+                
+                if (error) throw error;
+                
+                fanData = fan;
+                
+                // Display user info
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('emailInput').value = currentUser.email;
+                document.getElementById('usernameInput').value = fan.username || '';
+                
+                // Load subscriptions
+                await loadSubscriptions();
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showError('profileError', 'Failed to load user data');
+            }
+        }
+
+        async function loadSubscriptions() {
+            try {
+                const { data: subscriptions, error } = await supabaseClient
+                    .from('subscriptions')
+                    .select(`
+                        *,
+                        creators (name, slug)
+                    `)
+                    .eq('fan_id', currentUser.id);
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('subscriptionsContainer');
+                
+                if (!subscriptions || subscriptions.length === 0) {
+                    container.innerHTML = '<p style="color: #666;">No active subscriptions</p>';
+                    return;
+                }
+                
+                container.innerHTML = subscriptions.map(sub => `
+                    <div class="subscription-card">
+                        <h3>${sub.creators.name}</h3>
+                        <p>
+                            <span class="subscription-status status-${sub.status}">${sub.status}</span>
+                            £${sub.amount.toFixed(2)}/month
+                        </p>
+                        <p style="color: #666; margin-top: 10px;">
+                            ${sub.status === 'active' ? 
+                                `Next billing: ${new Date(sub.current_period_end).toLocaleDateString()}` :
+                                'Subscription cancelled'}
+                        </p>
+                        <div style="margin-top: 15px;">
+                            <a href="/chat?creator=${sub.creators.slug}" class="btn" style="display: inline-block; text-decoration: none; padding: 8px 16px; font-size: 0.9em;">
+                                Open Chat
+                            </a>
+                            ${sub.status === 'active' ? `
+                                <button onclick="manageSubscription('${sub.stripe_subscription_id}')" class="btn btn-secondary" style="margin-left: 10px; padding: 8px 16px; font-size: 0.9em;">
+                                    Manage Subscription
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading subscriptions:', error);
+                document.getElementById('subscriptionsContainer').innerHTML = 
+                    '<p style="color: #dc3545;">Failed to load subscriptions</p>';
+            }
+        }
+
+        window.manageSubscription = async function(subscriptionId) {
+            // Open Stripe customer portal
+            try {
+                const response = await fetch('/api/create-portal-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subscription_id: subscriptionId })
+                });
+                
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                }
+            } catch (error) {
+                alert('Failed to open subscription management');
+            }
+        }
+
+        // Update username
+        document.getElementById('updateUsernameBtn').addEventListener('click', async () => {
+            const newUsername = document.getElementById('usernameInput').value.trim();
+            
+            if (!newUsername) {
+                showError('profileError', 'Username cannot be empty');
+                return;
+            }
+            
+            // Validate username
+            if (!/^[a-z0-9_]+$/i.test(newUsername)) {
+                showError('profileError', 'Username can only contain letters, numbers, and underscores');
+                return;
+            }
+            
+            const btn = document.getElementById('updateUsernameBtn');
+            btn.disabled = true;
+            btn.textContent = 'Updating...';
+            
+            try {
+                // Check if username is taken
+                const { data: existing } = await supabaseClient
+                    .from('fans')
+                    .select('id')
+                    .eq('username', newUsername)
+                    .neq('id', currentUser.id)
+                    .single();
+                
+                if (existing) {
+                    throw new Error('Username is already taken');
+                }
+                
+                // Update username
+                const { error } = await supabaseClient
+                    .from('fans')
+                    .update({ username: newUsername })
+                    .eq('id', currentUser.id);
+                
+                if (error) throw error;
+                
+                showSuccess('profileSuccess', 'Username updated successfully!');
+                fanData.username = newUsername;
+                
+            } catch (error) {
+                showError('profileError', error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Update Username';
+            }
+        });
+
+        // Send magic link
+        document.getElementById('sendMagicLinkBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('sendMagicLinkBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            
+            try {
+                const { error } = await supabaseClient.auth.signInWithOtp({
+                    email: currentUser.email,
+                    options: {
+                        emailRedirectTo: window.location.origin + '/settings'
+                    }
+                });
+                
+                if (error) throw error;
+                
+                alert('Magic link sent! Check your email.');
+                
+            } catch (error) {
+                alert('Failed to send magic link: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send New Magic Link';
+            }
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = '/';
+        });
+
+        // Delete account
+        document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to delete your account? This cannot be undone.')) {
+                return;
+            }
+            
+            if (!confirm('This will delete all your data and cancel all subscriptions. Are you absolutely sure?')) {
+                return;
+            }
+            
+            try {
+                // TODO: Call delete account API
+                alert('Account deletion is not yet implemented. Please contact support.');
+            } catch (error) {
+                alert('Failed to delete account: ' + error.message);
+            }
+        });
+
+        function showSuccess(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
