@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import Stripe from 'stripe'
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -8,15 +9,30 @@ export async function onRequestPost(context) {
   const sig = request.headers.get('stripe-signature');
   const body = await request.text();
   
-  // For testing, we'll skip signature verification
-  // TODO: Add proper verification in production
-  
+  // ✅ SECURE: Verify Stripe signature
   let event;
   try {
-    event = JSON.parse(body);
-    console.log('✅ Event parsed:', event.type);
+    if (!env.STRIPE_SECRET_KEY) {
+      throw new Error('STRIPE_SECRET_KEY not configured');
+    }
+    
+    if (!env.STRIPE_WEBHOOK_SECRET) {
+      throw new Error('STRIPE_WEBHOOK_SECRET not configured');
+    }
+    
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+    
+    // Verify this request actually came from Stripe
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      env.STRIPE_WEBHOOK_SECRET
+    );
+    
+    console.log('✅ Webhook signature verified');
+    
   } catch (err) {
-    console.error('❌ Webhook JSON parse error:', err);
+    console.error('❌ Webhook signature verification failed:', err.message);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
@@ -41,7 +57,7 @@ export async function onRequestPost(context) {
       
       // AUTO-GENERATE unique username from email
       const baseUsername = fanEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
-      const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4 digits
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       const username = `${baseUsername}_${randomSuffix}`;
       
       console.log('👤 Generated username:', username);
@@ -56,7 +72,7 @@ export async function onRequestPost(context) {
         throw new Error('SUPABASE_SERVICE_ROLE_KEY not set in environment');
       }
       
-      // Initialize Supabase with SERVICE ROLE KEY (has admin permissions)
+      // Initialize Supabase with SERVICE ROLE KEY
       console.log('🔌 Initializing Supabase...');
       const supabase = createClient(
         env.SUPABASE_URL,
@@ -78,11 +94,10 @@ export async function onRequestPost(context) {
       
       console.log('✅ Found creator:', creator.name, 'ID:', creator.id);
       
-      // 2. Create Supabase Auth user (or get existing by email)
+      // 2. Create Supabase Auth user
       console.log('👥 Creating/fetching auth user...');
       let userId;
       
-      // Check if user already exists by email
       const { data: existingUsers } = await supabase.auth.admin.listUsers();
       const userExists = existingUsers?.users?.find(u => u.email === fanEmail);
       
@@ -92,7 +107,6 @@ export async function onRequestPost(context) {
       } else {
         console.log('🆕 Creating new auth user...');
         
-        // Generate a random password (user won't need it - they'll use magic links)
         const randomPassword = crypto.randomUUID() + crypto.randomUUID();
         
         const { data: newUser, error: authError } = await supabase.auth.admin.createUser({
@@ -118,7 +132,7 @@ export async function onRequestPost(context) {
         }
       }
       
-      // 3. Create or update fan record with username
+      // 3. Create or update fan record
       console.log('💾 Creating fan record...');
       const { error: fanError } = await supabase
         .from('fans')
@@ -140,17 +154,14 @@ export async function onRequestPost(context) {
       // 4. Create subscription record
       console.log('📋 Creating subscription record...');
       
-      // Get actual subscription object from Stripe for accurate dates
+      // Get actual subscription from Stripe
       let stripeSubscription = null;
-      if (session.subscription && env.STRIPE_SECRET_KEY) {
-        try {
-          const Stripe = (await import('stripe')).default;
-          const stripe = new Stripe(env.STRIPE_SECRET_KEY);
-          stripeSubscription = await stripe.subscriptions.retrieve(session.subscription);
-          console.log('✅ Retrieved Stripe subscription');
-        } catch (e) {
-          console.error('⚠️ Failed to retrieve subscription:', e);
-        }
+      try {
+        const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+        stripeSubscription = await stripe.subscriptions.retrieve(session.subscription);
+        console.log('✅ Retrieved Stripe subscription');
+      } catch (e) {
+        console.error('⚠️ Failed to retrieve subscription:', e);
       }
       
       const { data: subscription, error: subError } = await supabase
@@ -193,7 +204,6 @@ export async function onRequestPost(context) {
 
       if (convError) {
         console.error('⚠️ Conversation creation error:', convError);
-        // Don't throw - not critical
       } else {
         console.log('✅ Created conversation');
       }
@@ -204,7 +214,7 @@ export async function onRequestPost(context) {
         type: 'magiclink',
         email: fanEmail,
         options: {
-          redirectTo: `https://personacore.io/chat?creator=${creatorSlug}`
+          redirectTo: `https://personacore.io/my-chats`
         }
       });
       
@@ -260,8 +270,6 @@ export async function onRequestPost(context) {
           } catch (emailError) {
             console.error('❌ Email error:', emailError);
           }
-        } else {
-          console.log('⚠️ Skipping email - missing magic link URL or RESEND_API_KEY');
         }
       }
       
