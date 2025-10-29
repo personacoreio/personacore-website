@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Horror Queen Elara - Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b3d 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .creator-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .creator-info h2 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .creator-info p {
+            color: #b19cd9;
+            font-size: 14px;
+        }
+
+        .questions-remaining {
+            margin-left: auto;
+            background: rgba(102, 126, 234, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .message.creator .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: #4a5568;
+            color: white;
+        }
+
+        .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 70%;
+            color: white;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            color: #b19cd9;
+            font-style: italic;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        #message-input:focus {
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #message-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        #send-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        #send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .limit-reached {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 20px;
+            margin: 20px;
+        }
+
+        .limit-reached h3 {
+            color: white;
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        .limit-reached p {
+            color: #b19cd9;
+            margin-bottom: 24px;
+            font-size: 16px;
+        }
+
+        .limit-reached .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .limit-reached .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .welcome-message {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 16px;
+            border-radius: 12px;
+            color: #b19cd9;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-header">
+        <div class="creator-avatar">E</div>
+        <div class="creator-info">
+            <h2>Horror Queen Elara</h2>
+            <p>Horror Movie Enthusiast</p>
+        </div>
+        <div class="questions-remaining" id="questions-counter">
+            5 free questions left
+        </div>
+    </div>
+
+    <div class="chat-messages" id="messages">
+        <div class="welcome-message">
+            👻 <strong>Welcome to the demo!</strong> You can ask Elara 5 free questions about horror movies. Then subscribe to keep chatting!
+        </div>
+        <div class="message creator">
+            <div class="message-avatar">E</div>
+            <div class="message-content">
+                Hey there, horror fan! 🎬 I'm Elara, and I'm obsessed with all things horror movies. Ask me anything about scary films, hidden gems, or my favorite terrifying moments!
+            </div>
+        </div>
+    </div>
+
+    <div class="typing-indicator" id="typing">
+        Elara is typing...
+    </div>
+
+    <div class="chat-input-container">
+        <div class="chat-input-wrapper">
+            <input 
+                type="text" 
+                id="message-input" 
+                placeholder="Ask about horror movies..."
+                maxlength="500"
+            >
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const CHAT_API_URL = 'https://personacore-chat.pwigglesworth-cloudflare.workers.dev';
+        const CREATOR_SLUG = 'horror-queen-elara';
+        const MAX_FREE_QUESTIONS = 5;
+        
+        let questionCount = 0;
+        let conversationId = null;
+
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing');
+        const questionsCounter = document.getElementById('questions-counter');
+
+        // Generate anonymous session ID
+        const sessionId = localStorage.getItem('demo_session_id') || 
+                         'demo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('demo_session_id', sessionId);
+
+        // Load saved question count
+        const savedCount = parseInt(localStorage.getItem('demo_questions_' + sessionId) || '0');
+        questionCount = savedCount;
+        updateCounter();
+
+        function updateCounter() {
+            const remaining = MAX_FREE_QUESTIONS - questionCount;
+            questionsCounter.textContent = remaining > 0 
+                ? `${remaining} free question${remaining === 1 ? '' : 's'} left`
+                : 'Demo limit reached';
+            
+            if (remaining <= 0) {
+                showLimitReached();
+            }
+        }
+
+        function showLimitReached() {
+            messagesContainer.innerHTML += `
+                <div class="limit-reached">
+                    <h3>🎬 Want to keep chatting with Elara?</h3>
+                    <p>You've used your 5 free demo questions. Subscribe now to continue the conversation!</p>
+                    <a href="/join/horror-queen-elara" class="btn">Subscribe to Chat Unlimited →</a>
+                </div>
+            `;
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+        }
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'creator'}`;
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isUser ? 'Y' : 'E'}</div>
+                <div class="message-content">${content}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || questionCount >= MAX_FREE_QUESTIONS) return;
+
+            // Disable input
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+
+            // Add user message
+            addMessage(message, true);
+            messageInput.value = '';
+
+            // Increment question count
+            questionCount++;
+            localStorage.setItem('demo_questions_' + sessionId, questionCount);
+            updateCounter();
+
+            // Show typing indicator
+            typingIndicator.classList.add('active');
+
+            try {
+                const response = await fetch(`${CHAT_API_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        creator_slug: CREATOR_SLUG,
+                        message: message,
+                        conversation_id: conversationId,
+                        fan_id: sessionId, // Use session ID as anonymous fan
+                        is_demo: true
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.conversation_id) {
+                    conversationId = data.conversation_id;
+                }
+
+                // Hide typing indicator
+                typingIndicator.classList.remove('active');
+
+                // Add AI response
+                if (data.response) {
+                    addMessage(data.response);
+                } else {
+                    addMessage("Sorry, I couldn't process that. Try asking about horror movies!");
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                typingIndicator.classList.remove('active');
+                addMessage("Oops! Something went wrong. Please try again.");
+            } finally {
+                // Re-enable input if not at limit
+                if (questionCount < MAX_FREE_QUESTIONS) {
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                    messageInput.focus();
+                }
+            }
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Focus input on load
+        messageInput.focus();
+    </script>
+</body>
+</html>
