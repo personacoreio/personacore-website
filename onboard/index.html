@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join PersonaCore - Creator Onboarding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .progress-step.completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .step h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .step-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .label-hint {
+            font-weight: normal;
+            color: #666;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 50px;
+        }
+
+        .tag {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 120px;
+            padding: 6px;
+        }
+
+        .qa-pair {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .qa-pair .remove-qa {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f44336;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .add-button {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .add-button:hover {
+            background: #45a049;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .summary-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-value {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .pricing-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .pricing-box .price {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .pricing-box ul {
+            text-align: left;
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .pricing-box li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .pricing-box li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .character-count {
+            text-align: right;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Join PersonaCore</h1>
+            <p>Create your AI twin and connect with your superfans</p>
+        </div>
+
+        <div class="form-card">
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-step active" data-step="1">1</div>
+                <div class="progress-step" data-step="2">2</div>
+                <div class="progress-step" data-step="3">3</div>
+                <div class="progress-step" data-step="4">4</div>
+                <div class="progress-step" data-step="5">5</div>
+            </div>
+
+            <form id="onboardingForm" novalidate>
+                <!-- Step 1: Basic Info -->
+                <div class="step active" data-step="1">
+                    <h2>Basic Information</h2>
+                    <p class="step-subtitle">Let's start with the essentials</p>
+
+                    <div class="form-group">
+                        <label for="name">Your Full Name *</label>
+                        <input type="text" id="name" name="name" data-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" data-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slug">Choose Your Username * <span class="label-hint">(personacore.io/your-username)</span></label>
+                        <input type="text" id="slug" name="slug" placeholder="john-smith" pattern="[a-z0-9\-]+" data-required="true">
+                        <div class="error" id="slugError">Username can only contain lowercase letters, numbers, and hyphens</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expertise">Your Expertise Areas * <span class="label-hint">(Press Enter after each one)</span></label>
+                        <div class="tag-input-container" id="expertiseContainer">
+                            <input type="text" class="tag-input" id="expertiseInput" placeholder="e.g. fitness, nutrition" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Public Bio * <span class="label-hint">(This appears on your page - 100-300 words)</span></label>
+                        <textarea id="bio" name="bio" placeholder="Tell potential fans who you are and what you do..." data-required="true"></textarea>
+                        <div class="character-count"><span id="bioCount">0</span> / 1500 characters</div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Communication Style -->
+                <div class="step" data-step="2">
+                    <h2>Your Communication Style</h2>
+                    <p class="step-subtitle">Help us capture your unique voice</p>
+
+                    <div class="form-group">
+                        <label for="tone">How would you describe your vibe? *</label>
+                        <select id="tone" name="tone" data-required="true">
+                            <option value="">Choose one...</option>
+                            <option value="professional">Professional & Authoritative</option>
+                            <option value="casual">Casual & Friendly</option>
+                            <option value="motivational">Motivational & Energetic</option>
+                            <option value="humorous">Humorous & Light-hearted</option>
+                            <option value="empathetic">Empathetic & Supportive</option>
+                            <option value="direct">Direct & No-nonsense</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="catchphrases">Your Catchphrases or Favorite Sayings <span class="label-hint">(Press Enter after each one)</span></label>
+                        <div class="tag-input-container" id="catchphrasesContainer">
+                            <input type="text" class="tag-input" id="catchphrasesInput" placeholder="e.g. No excuses, just results" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emojis">Emojis You Use Often <span class="label-hint">(Optional - helps capture your style)</span></label>
+                        <input type="text" id="emojis" name="emojis" placeholder="💪 🔥 ⚡ ✨">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slang">Words or Slang You Use Regularly <span class="label-hint">(Press Enter after each one)</span></label>
+                        <div class="tag-input-container" id="slangContainer">
+                            <input type="text" class="tag-input" id="slangInput" placeholder="e.g. mate, brilliant, proper" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Do you swear in your content?</label>
+                        <select id="swearing" name="swearing">
+                            <option value="never">Never - Keep it clean</option>
+                            <option value="mild">Occasionally - Mild language</option>
+                            <option value="moderate">Frequently - Moderate language</option>
+                            <option value="heavy">Often - I'm quite sweary</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Your Story -->
+                <div class="step" data-step="3">
+                    <h2>Your Story</h2>
+                    <p class="step-subtitle">Share the experiences that shaped you</p>
+
+                    <div class="form-group">
+                        <label for="origin">Your Origin Story * <span class="label-hint">(Why did you start? What drives you? 100-300 words)</span></label>
+                        <textarea id="origin" name="origin" placeholder="What made you passionate about this field? What was your turning point?" data-required="true"></textarea>
+                        <div class="character-count"><span id="originCount">0</span> / 1500 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stories">3 Defining Moments * <span class="label-hint">(Big wins, failures, breakthroughs - be specific!)</span></label>
+                        <div id="storiesContainer">
+                            <div class="form-group">
+                                <textarea class="story-input" placeholder="Story 1: e.g. Tore my ACL in 2018, had to rebuild from scratch..." data-required="true"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <textarea class="story-input" placeholder="Story 2: e.g. My first client lost 50lbs and cried tears of joy..." data-required="true"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <textarea class="story-input" placeholder="Story 3: e.g. Won national championship after being told I'd never compete again..." data-required="true"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Your Expertise -->
+                <div class="step" data-step="4">
+                    <h2>Your Knowledge & Opinions</h2>
+                    <p class="step-subtitle">What makes your approach unique?</p>
+
+                    <div class="form-group">
+                        <label for="beliefs">Your Strong Beliefs * <span class="label-hint">(3-5 things you believe that others might disagree with)</span></label>
+                        <div class="tag-input-container" id="beliefsContainer">
+                            <input type="text" class="tag-input" id="beliefsInput" placeholder="e.g. Cardio is overrated for fat loss" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="myths">Common Myths You Hate * <span class="label-hint">(Things people believe that are wrong)</span></label>
+                        <div class="tag-input-container" id="mythsContainer">
+                            <input type="text" class="tag-input" id="mythsInput" placeholder="e.g. You need to eat 6 meals a day" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="avoid">Topics You Don't Discuss <span class="label-hint">(Press Enter after each one)</span></label>
+                        <div class="tag-input-container" id="avoidContainer">
+                            <input type="text" class="tag-input" id="avoidInput" placeholder="e.g. politics, religion, steroids" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sample Q&A Pairs * <span class="label-hint">(10-15 questions you get ALL THE TIME with YOUR answers)</span></label>
+                        <div id="qaContainer"></div>
+                        <button type="button" class="add-button" onclick="addQAPair()">+ Add Q&A</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Payment -->
+                <div class="step" data-step="5">
+                    <h2>Review & Complete</h2>
+                    <p class="step-subtitle">Check everything looks good</p>
+
+                    <div id="summaryContainer"></div>
+
+                    <div class="pricing-box">
+                        <h3>PersonaCore Creator Setup</h3>
+                        <div class="price">£299</div>
+                        <p>One-time setup fee includes:</p>
+                        <ul>
+                            <li>Custom AI twin trained on your personality</li>
+                            <li>Dedicated creator landing page</li>
+                            <li>Full dashboard & analytics</li>
+                            <li>Unlimited updates to your persona</li>
+                            <li>Keep 70% of all fan subscriptions</li>
+                        </ul>
+                    </div>
+
+                    <label style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
+                        <input type="checkbox" id="termsAgree" data-required="true">
+                        <span>I agree to the Terms of Service and Privacy Policy</span>
+                    </label>
+                </div>
+
+                <!-- Button Group -->
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                    <button type="button" class="btn btn-primary" id="submitBtn" style="display: none;">Pay £299 & Create AI Twin</button>
+                </div>
+            </form>
+
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">✨</div>
+                <h2>Redirecting to payment...</h2>
+                <p>You'll be taken to Stripe to complete your £299 setup payment.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form data storage
+        const formData = {
+            expertise: [],
+            catchphrases: [],
+            slang: [],
+            beliefs: [],
+            myths: [],
+            avoid: [],
+            stories: [],
+            qaList: []
+        };
+
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        // Tag input functionality
+        function initTagInput(containerId, inputId, arrayKey) {
+            const container = document.getElementById(containerId);
+            const input = document.getElementById(inputId);
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const value = input.value.trim();
+                    if (value) {
+                        formData[arrayKey].push(value);
+                        addTag(container, value, arrayKey);
+                        input.value = '';
+                    }
+                    return false;
+                }
+            });
+        }
+
+        function addTag(container, text, arrayKey) {
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                <span>${text}</span>
+                <span class="tag-remove" onclick="removeTag(this, '${arrayKey}', '${text}')">×</span>
+            `;
+            container.insertBefore(tag, container.querySelector('.tag-input'));
+        }
+
+        function removeTag(element, arrayKey, value) {
+            formData[arrayKey] = formData[arrayKey].filter(item => item !== value);
+            element.parentElement.remove();
+        }
+
+        // Initialize all tag inputs
+        initTagInput('expertiseContainer', 'expertiseInput', 'expertise');
+        initTagInput('catchphrasesContainer', 'catchphrasesInput', 'catchphrases');
+        initTagInput('slangContainer', 'slangInput', 'slang');
+        initTagInput('beliefsContainer', 'beliefsInput', 'beliefs');
+        initTagInput('mythsContainer', 'mythsInput', 'myths');
+        initTagInput('avoidContainer', 'avoidInput', 'avoid');
+
+        // Q&A Pair functionality
+        function addQAPair() {
+            const container = document.getElementById('qaContainer');
+            
+            const pairDiv = document.createElement('div');
+            pairDiv.className = 'qa-pair';
+            pairDiv.innerHTML = `
+                <button type="button" class="remove-qa" onclick="removeQAPair(this)">×</button>
+                <div class="form-group">
+                    <label>Question</label>
+                    <input type="text" class="qa-question" placeholder="e.g. Should I do cardio before or after weights?">
+                </div>
+                <div class="form-group">
+                    <label>Your Answer</label>
+                    <textarea class="qa-answer" placeholder="Your authentic answer in your own voice..."></textarea>
+                </div>
+            `;
+            container.appendChild(pairDiv);
+        }
+
+        function removeQAPair(button) {
+            button.parentElement.remove();
+        }
+
+        // Add initial Q&A pairs
+        for (let i = 0; i < 3; i++) {
+            addQAPair();
+        }
+
+        // Character counters
+        document.getElementById('bio').addEventListener('input', (e) => {
+            document.getElementById('bioCount').textContent = e.target.value.length;
+        });
+
+        document.getElementById('origin').addEventListener('input', (e) => {
+            document.getElementById('originCount').textContent = e.target.value.length;
+        });
+
+        // Step navigation
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+
+            document.querySelectorAll('.progress-step').forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i + 1 < step) s.classList.add('completed');
+                if (i + 1 === step) s.classList.add('active');
+            });
+
+            document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'block';
+            document.getElementById('submitBtn').style.display = step === totalSteps ? 'block' : 'none';
+
+            if (step === totalSteps) {
+                generateSummary();
+            }
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (validateStep(currentStep)) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            currentStep--;
+            showStep(currentStep);
+        });
+
+        function validateStep(step) {
+            const currentStepEl = document.querySelector(`.step[data-step="${step}"]`);
+            const inputs = currentStepEl.querySelectorAll('[data-required="true"]');
+            
+            for (let input of inputs) {
+                if (input.type === 'checkbox') {
+                    if (!input.checked) {
+                        alert('Please check the required checkbox');
+                        input.focus();
+                        return false;
+                    }
+                } else if (!input.value.trim()) {
+                    input.focus();
+                    alert('Please fill in all required fields');
+                    return false;
+                }
+            }
+
+            if (step === 1 && formData.expertise.length === 0) {
+                alert('Please add at least one expertise area');
+                document.getElementById('expertiseInput').focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        function generateSummary() {
+            const summary = document.getElementById('summaryContainer');
+            
+            // Collect stories
+            formData.stories = Array.from(document.querySelectorAll('.story-input')).map(input => input.value);
+            
+            // Collect Q&As
+            formData.qaList = Array.from(document.querySelectorAll('.qa-pair')).map(pair => ({
+                question: pair.querySelector('.qa-question').value,
+                answer: pair.querySelector('.qa-answer').value
+            }));
+
+            summary.innerHTML = `
+                <div class="summary-section">
+                    <h3>Basic Info</h3>
+                    <div class="summary-item">
+                        <div class="summary-label">Name:</div>
+                        <div class="summary-value">${document.getElementById('name').value}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Email:</div>
+                        <div class="summary-value">${document.getElementById('email').value}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Username:</div>
+                        <div class="summary-value">personacore.io/${document.getElementById('slug').value}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Expertise:</div>
+                        <div class="summary-value">${formData.expertise.join(', ')}</div>
+                    </div>
+                </div>
+
+                <div class="summary-section">
+                    <h3>Communication Style</h3>
+                    <div class="summary-item">
+                        <div class="summary-label">Tone:</div>
+                        <div class="summary-value">${document.getElementById('tone').value}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Catchphrases:</div>
+                        <div class="summary-value">${formData.catchphrases.join(', ') || 'None added'}</div>
+                    </div>
+                </div>
+
+                <div class="summary-section">
+                    <h3>Content</h3>
+                    <div class="summary-item">
+                        <div class="summary-label">Stories:</div>
+                        <div class="summary-value">${formData.stories.length} defining moments shared</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Q&A Pairs:</div>
+                        <div class="summary-value">${formData.qaList.length} sample responses provided</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Form submission
+        document.getElementById('submitBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            if (!document.getElementById('termsAgree').checked) {
+                alert('Please agree to the Terms of Service');
+                return;
+            }
+
+            // Collect all real form data
+            const actualFormData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                slug: document.getElementById('slug').value,
+                expertise: formData.expertise,
+                bio: document.getElementById('bio').value,
+                tone: document.getElementById('tone').value,
+                emojis: document.getElementById('emojis').value,
+                swearing: document.getElementById('swearing').value,
+                origin: document.getElementById('origin').value,
+                stories: formData.stories,
+                catchphrases: formData.catchphrases,
+                slang: formData.slang,
+                beliefs: formData.beliefs,
+                myths: formData.myths,
+                avoid: formData.avoid,
+                qaList: formData.qaList
+            };
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            try {
+                const response = await fetch('https://personacore-chat.pwigglesworth-cloudflare.workers.dev/api/onboard-creator', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(actualFormData)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Response error:', errorText);
+                    throw new Error('Failed to create onboarding session: ' + response.status);
+                }
+
+                const data = await response.json();
+                console.log('Success response:', data);
+
+                if (data.checkoutUrl) {
+                    document.getElementById('onboardingForm').style.display = 'none';
+                    document.getElementById('successMessage').classList.add('active');
+                    setTimeout(() => {
+                        window.location.href = data.checkoutUrl;
+                    }, 2000);
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+
+            } catch (error) {
+                console.error('Full error details:', error);
+                alert('Error: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Pay £299 & Create AI Twin';
+            }
+        });
+
+        // Prevent form submission on Enter key
+        document.getElementById('onboardingForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>
