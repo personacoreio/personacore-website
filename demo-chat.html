@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat with Horror Queen Elara - Demo</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -353,32 +352,31 @@
             typingIndicator.classList.add('active');
 
             try {
-                const response = await fetch(`${CHAT_API_URL}/chat`, {
+                const response = await fetch(`${CHAT_API_URL}/api/chat`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        creator_slug: CREATOR_SLUG,
+                        creatorSlug: CREATOR_SLUG,
                         message: message,
-                        conversation_id: conversationId,
-                        fan_id: sessionId, // Use session ID as anonymous fan
-                        is_demo: true
+                        conversationId: conversationId || crypto.randomUUID(),
+                        fanId: sessionId
                     })
                 });
 
                 const data = await response.json();
                 
-                if (data.conversation_id) {
-                    conversationId = data.conversation_id;
+                if (data.conversationId) {
+                    conversationId = data.conversationId;
                 }
 
                 // Hide typing indicator
                 typingIndicator.classList.remove('active');
 
                 // Add AI response
-                if (data.response) {
-                    addMessage(data.response);
+                if (data.reply) {
+                    addMessage(data.reply);
                 } else {
                     addMessage("Sorry, I couldn't process that. Try asking about horror movies!");
                 }
