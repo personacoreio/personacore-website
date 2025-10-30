@@ -514,20 +514,20 @@
                         
                         <div class="system-stat-card">
                             <div class="system-stat-label">Monthly Costs</div>
-                            <div class="system-stat-value">£${data.costs.total_cost_month_gbp?.toFixed(2) || '0.00'}</div>
+                            <div class="system-stat-value">£${(parseFloat(data.costs.total_cost_month_gbp) || 0).toFixed(2)}</div>
                             <div class="system-stat-meta">AI + Infrastructure</div>
                         </div>
                         
                         <div class="system-stat-card">
                             <div class="system-stat-label">Monthly Revenue</div>
-                            <div class="system-stat-value">£${data.costs.total_revenue_month_gbp?.toFixed(2) || '0.00'}</div>
+                            <div class="system-stat-value">£${(parseFloat(data.costs.total_revenue_month_gbp) || 0).toFixed(2)}</div>
                             <div class="system-stat-meta">From subscriptions</div>
                         </div>
                         
                         <div class="system-stat-card" style="border-left-color: ${data.costs.total_profit_month_gbp >= 0 ? '#10b981' : '#ef4444'};">
                             <div class="system-stat-label">Monthly Profit</div>
-                            <div class="system-stat-value" style="color: ${data.costs.total_profit_month_gbp >= 0 ? '#10b981' : '#ef4444'};">
-                                ${profitSign}£${data.costs.total_profit_month_gbp?.toFixed(2) || '0.00'}
+                            <div class="system-stat-value" style="color: ${parseFloat(data.costs.total_profit_month_gbp) >= 0 ? '#10b981' : '#ef4444'};">
+                                ${profitSign}£${(parseFloat(data.costs.total_profit_month_gbp) || 0).toFixed(2)}
                             </div>
                             <div class="system-stat-meta">Net after costs</div>
                         </div>
@@ -667,7 +667,7 @@
                     
                     <div class="stat-card">
                         <div class="stat-label">Monthly Revenue</div>
-                        <div class="stat-value">£${(summary.monthly_revenue_gbp || 0).toFixed(2)}</div>
+                        <div class="stat-value">£${(parseFloat(summary.monthly_profit_gbp) || 0).toFixed(2)}</div>
                         <div class="stat-trend neutral">From subscriptions</div>
                     </div>
                     
