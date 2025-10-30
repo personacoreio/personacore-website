@@ -2,27 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- iOS-Optimized Viewport -->
+    <!-- iOS-optimized viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <title>Persona Core - AI Creators for Content Creators</title>
     <meta name="description" content="AI creators for content creators. Engage your fans 24/7 with your personal AI. £299 setup fee.">
-    
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             line-height: 1.6;
             color: #1d1d1f;
             overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%; /* iOS text size fix */
+            padding-top: 60px; /* Space for fixed header */
+        }
+
+        /* Fixed Navigation Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav img {
+            height: 30px;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #1d1d1f;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
         }
 
         /* Hero Section */
@@ -94,7 +130,7 @@
             display: inline-block;
             /* iOS touch improvements */
             -webkit-tap-highlight-color: transparent;
-            min-height: 48px; /* Touch target size */
+            min-height: 48px; /* iOS touch target */
         }
 
         .btn-primary {
@@ -257,107 +293,37 @@
             font-size: 3rem;
             font-weight: 700;
             color: #667eea;
-            margin: 20px 0;
+            margin-bottom: 10px;
         }
 
-        .price-detail {
+        .price span {
+            font-size: 1.2rem;
             color: #86868b;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
         }
 
         .features {
             list-style: none;
+            margin: 30px 0;
             text-align: left;
-            margin-bottom: 30px;
         }
 
         .features li {
             padding: 12px 0;
-            color: #1d1d1f;
             border-bottom: 1px solid #f5f5f7;
+            color: #1d1d1f;
         }
 
         .features li:before {
-            content: "✓";
-            color: #667eea;
-            font-weight: bold;
+            content: "✓ ";
+            color: #34a853;
+            font-weight: 700;
             margin-right: 10px;
         }
 
-        /* Login Section */
-        .login-section {
-            padding: 80px 20px;
-            background: white;
-        }
-
-        .login-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 40px;
-            max-width: 900px;
-            margin: 50px auto 0;
-        }
-
-        .login-card {
-            background: #f5f5f7;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .login-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #1d1d1f;
-        }
-
-        .login-card p {
+        .note {
+            font-size: 0.85em;
             color: #86868b;
-            margin-bottom: 25px;
-        }
-
-        .login-card input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 16px; /* 16px prevents iOS zoom */
-            margin-bottom: 15px;
-            font-family: inherit;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .login-card input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .login-card button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-height: 48px; /* Touch target */
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .login-card button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .login-card button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
+            font-weight: normal;
         }
 
         /* FAQ */
@@ -372,25 +338,21 @@
         }
 
         .faq-item {
-            margin-bottom: 30px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .faq-item:last-child {
-            border-bottom: none;
+            background: #f5f5f7;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
         }
 
         .faq-item h3 {
-            font-size: 1.4rem;
-            color: #1d1d1f;
+            color: #667eea;
             margin-bottom: 10px;
+            font-size: 1.2rem;
         }
 
         .faq-item p {
-            color: #86868b;
-            font-size: 1.05rem;
-            line-height: 1.7;
+            color: #1d1d1f;
+            line-height: 1.8;
         }
 
         /* CTA Section */
@@ -407,32 +369,43 @@
         }
 
         .cta-section p {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 40px;
             opacity: 0.95;
         }
 
         /* Footer */
         footer {
-            padding: 40px 20px;
             background: #1d1d1f;
             color: white;
+            padding: 40px 20px;
             text-align: center;
         }
 
         .footer-content {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
+        .footer-logo {
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+            width: auto;
+        }
+
         .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
             margin: 20px 0;
         }
 
         .social-links a {
             color: white;
             text-decoration: none;
-            margin: 0 15px;
             transition: opacity 0.3s;
         }
 
@@ -441,15 +414,40 @@
         }
 
         footer p {
-            margin: 10px 0;
             color: #86868b;
+            margin-top: 20px;
         }
 
-        /* Mobile Responsive Styles */
+        /* Input fields - iOS zoom fix */
+        input[type="email"] {
+            font-size: 16px !important; /* Prevents iOS zoom */
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            /* Hero adjustments */
+            body {
+                padding-top: 50px;
+            }
+
+            /* Navigation mobile */
+            header {
+                padding: 10px 15px;
+            }
+
+            nav img {
+                height: 25px;
+            }
+
+            nav .nav-links {
+                gap: 15px;
+                font-size: 0.9rem;
+            }
+
+            /* Hero mobile */
             h1 {
-                font-size: 2.2rem; /* Much smaller for mobile */
+                font-size: 2.2rem;
             }
 
             .hero {
@@ -461,30 +459,10 @@
             }
 
             .logo img {
-                height: 45px;
+                height: 50px;
             }
 
-            .cta-buttons {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .btn {
-                width: 100%;
-                padding: 14px 30px;
-                font-size: 1rem;
-            }
-
-            /* Section padding */
-            .demo-section,
-            .how-it-works,
-            .pricing,
-            .login-section,
-            .faq {
-                padding: 60px 20px;
-            }
-
-            /* Section titles */
+            /* Sections mobile */
             .section-title {
                 font-size: 1.8rem;
             }
@@ -493,71 +471,45 @@
                 font-size: 1rem;
             }
 
-            /* Demo iframe - responsive height */
+            .demo-section,
+            .how-it-works,
+            .pricing,
+            .faq {
+                padding: 60px 20px;
+            }
+
+            /* Buttons mobile */
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 14px 30px;
+                font-size: 1rem;
+            }
+
+            /* Demo iframe mobile */
             .demo-container {
                 max-width: 100%;
             }
 
             .demo-container iframe {
-                height: 550px; /* Shorter on mobile */
+                height: 550px;
             }
 
-            /* Steps - single column on mobile */
+            /* Steps mobile */
             .steps {
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
 
-            .step {
-                padding: 20px;
-            }
-
-            .step h3 {
-                font-size: 1.3rem;
-            }
-
-            .step p {
-                font-size: 1rem;
-            }
-
-            /* Pricing cards */
+            /* Pricing mobile */
             .pricing-cards {
                 grid-template-columns: 1fr;
-                gap: 25px;
             }
 
-            .pricing-card {
-                padding: 30px 25px;
-            }
-
-            .price {
-                font-size: 2.5rem;
-            }
-
-            /* Login grid */
-            .login-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            .login-card {
-                padding: 30px 25px;
-            }
-
-            .login-card h3 {
-                font-size: 1.5rem;
-            }
-
-            /* FAQ */
-            .faq-item h3 {
-                font-size: 1.2rem;
-            }
-
-            .faq-item p {
-                font-size: 1rem;
-            }
-
-            /* CTA Section */
+            /* CTA mobile */
             .cta-section {
                 padding: 60px 20px;
             }
@@ -570,25 +522,21 @@
                 font-size: 1.1rem;
             }
 
-            /* Footer */
-            .social-links a {
-                display: block;
-                margin: 10px 0;
+            /* Footer mobile */
+            .social-links {
+                flex-wrap: wrap;
             }
         }
 
-        /* Very small screens (iPhone SE, etc) */
+        /* Very small screens */
         @media (max-width: 375px) {
             h1 {
                 font-size: 1.8rem;
             }
 
-            .hero {
-                padding: 40px 15px 60px;
-            }
-
-            .hero p {
-                font-size: 1rem;
+            nav .nav-links {
+                gap: 10px;
+                font-size: 0.8rem;
             }
 
             .demo-container iframe {
@@ -597,16 +545,6 @@
 
             .section-title {
                 font-size: 1.6rem;
-            }
-
-            .btn {
-                padding: 12px 25px;
-                font-size: 0.95rem;
-            }
-
-            .pricing-card,
-            .login-card {
-                padding: 25px 20px;
             }
         }
 
@@ -623,80 +561,103 @@
             .demo-container iframe {
                 height: 400px;
             }
-
-            .demo-section,
-            .how-it-works,
-            .pricing {
-                padding: 40px 20px;
-            }
-        }
-
-        /* Tablet landscape */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            h1 {
-                font-size: 2.8rem;
-            }
-
-            .section-title {
-                font-size: 2.2rem;
-            }
-
-            .pricing-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
     </style>
+    <!-- Add before closing head tag -->
+<script>
+    // Track button clicks
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Add your analytics code here
+            console.log('Button clicked:', this.textContent);
+        });
+    });
+</script>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="logo">
-                <h1>PersonaCore</h1>
-            </div>
-            <h1>AI Creators for Content Creators</h1>
-            <p>Engage your fans 24/7 with your personal AI twin. One-time £299 setup.</p>
+
+<!-- Fixed Navigation Header -->
+<header>
+    <nav>
+        <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" alt="Persona Core">
+        <div class="nav-links">
+            <a href="#demo">Demo</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+        </div>
+    </nav>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="logo" style="margin-bottom: 30px;">
+            <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" 
+                 alt="Persona Core" 
+                 style="height: 70px; width: auto; filter: brightness(0) invert(1);">
+        </div>
+        <h1>AI Twins for Creators</h1>
+            <p>Let your fans chat with your AI personality 24/7. Scale your fan engagement without the burnout.</p>
             <div class="cta-buttons">
-                <a href="/onboard" class="btn btn-primary">Become a Creator</a>
+                <a href="#pricing" class="btn btn-primary">See Pricing</a>
                 <a href="#demo" class="btn btn-secondary">Try Demo</a>
+				<a href="#faq" class="btn btn-primary">FAQs</a>
+				<a href="#how-it-works" class="btn btn-primary">How Does It Work?</a>
             </div>
         </div>
     </section>
 
-    <!-- Demo Section -->
-    <section id="demo" class="demo-section">
-        <div class="container">
-            <h2 class="section-title">Try It Yourself</h2>
-            <p class="section-subtitle">Chat with Horror Queen Elara - our demo AI creator</p>
-            <div class="demo-container">
-                <iframe 
-                    src="https://personacore-website.pages.dev/?creator=elara-horror-queen"
-                    loading="lazy"
-                    title="Demo Chat with Horror Queen Elara"
-                ></iframe>
+   <!-- Demo Section -->
+<section id="demo" class="demo-section">
+    <div class="container">
+        <h2 class="section-title">See It In Action</h2>
+        <p class="section-subtitle">Chat with Horror Queen Elara - passionate horror movie fan and film enthusiast</p>
+        
+        <!-- Fallback demo container -->
+        <div class="demo-container">
+            <div id="widget-fallback" style="display: none; text-align: center; padding: 60px 20px; background: white; border-radius: 20px;">
+                <h3 style="margin-bottom: 20px;">🎬 Chat Loading</h3>
+                <p style="margin-bottom: 30px; color: #666;">Experience chatting with a real AI creator!</p>
+                <a href="/chat?creator=horror-queen-elara" target="_blank" class="btn btn-primary">
+                    Chat with Elara Directly
+                </a>
             </div>
+            
+            <iframe 
+                src="/demo-chat.html"
+                style="width: 100%; height: 650px; border: 2px solid #667eea; border-radius: 20px; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);"
+                onload="console.log('Elara chat loaded')"
+                onerror="document.getElementById('widget-fallback').style.display='block'">
+            </iframe>
         </div>
-    </section>
+        
+        <p style="text-align: center; margin-top: 30px; color: #86868b;">
+            ☝️ This is a real AI creator. Imagine YOUR fans chatting with YOUR AI persona 24/7.
+        </p>
+    </div>
+</section>
 
     <!-- How It Works -->
     <section id="how-it-works" class="how-it-works">
         <div class="container">
             <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Get your AI creator live in 3 simple steps</p>
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Complete Questionnaire</h3>
-                    <p>Tell us about your personality, expertise, and communication style. This takes 2-3 hours but ensures your AI twin truly represents you.</p>
+                    <h3>Complete Our Questionnaire</h3>
+                    <p>Tell us about your style, expertise, and personality. This takes 2-3 hours but ensures your AI creator is authentically you.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>We Build Your AI</h3>
+                    <h3>We Build Your AI Creator</h3>
                     <p>Our team trains your personal AI creator using your questionnaire. Ready in 3-5 working days.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Launch & Earn</h3>
-                    <p>Share your unique chat link with fans. They subscribe, chat with your AI, and you earn 70% of subscription revenue.</p>
+                    <h3>Share & Earn</h3>
+                    <p>We provide your unique PersonaCore link. Share it with fans who subscribe and chat with your AI - you keep 70% of revenue.</p>
                 </div>
             </div>
         </div>
@@ -705,28 +666,33 @@
     <!-- Pricing -->
     <section id="pricing" class="pricing">
         <div class="container">
-            <h2 class="section-title">Simple Pricing</h2>
-            <p class="section-subtitle">One-time setup. Revenue share ongoing.</p>
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <p class="section-subtitle">Creators pay a one-off setup fee, we do the rest</p>
             <div class="pricing-cards">
-                <div class="pricing-card">
-                    <h3>Setup Fee</h3>
-                    <div class="price">£299</div>
-                    <p class="price-detail">One-time payment</p>
+                <!-- Original Pricing Card -->
+                <div class="pricing-card featured">
+                    <span class="badge">Full Setup Included</span>
+                    <h3>Creator Plan</h3>
+                    <div class="price">£299<span></div>
+                    <p style="color: #86868b; margin-bottom: 20px;">For creators</p>
                     <ul class="features">
-                        <li>Custom AI creator training</li>
-                        <li>Personal chat page</li>
-                        <li>Full questionnaire setup</li>
-                        <li>3-5 day delivery</li>
-                        <li>Lifetime updates</li>
+                        <li><strong>1,000 messages/month per fan</strong> <span class="note">(resets monthly)</span></li>
+						<li><strong>50,000 total messages/month</strong> included <span class="note">(scales with your fanbase)</span></li>
+						<li>Advanced AI personality <span class="note">(always-on, intelligent conversations)</span></li>
+						<li>Personalized analytics dashboard</li>
+						<li>Custom greeting & personality setup</li>
+						<li>Your dedicated PersonaCore page</li>
+						<li>Standard email support</li>
                     </ul>
-                    <a href="/onboard" class="btn btn-primary">Get Started</a>
+                    <a href="mailto:hello@personacore.io?subject=Creator Plan" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</a>
                 </div>
 
-                <div class="pricing-card featured">
-                    <div class="badge">Revenue Share</div>
+                <!-- Revenue Split Card (NEW - as requested) -->
+                <div class="pricing-card">
+                    <span class="badge">Revenue Share</span>
                     <h3>Ongoing</h3>
-                    <div class="price">30/70</div>
-                    <p class="price-detail">Commission split</p>
+                    <div class="price">30/70<span></div>
+                    <p style="color: #86868b; margin-bottom: 20px;">Commission split</p>
                     <ul class="features">
                         <li>You keep 70% of revenue</li>
                         <li>PersonaCore takes 30%</li>
@@ -734,117 +700,288 @@
                         <li>Fair use message limits</li>
                         <li>Unlimited fan subscriptions</li>
                     </ul>
-                    <a href="mailto:info@personacore.io" class="btn btn-primary">Contact Us</a>
+                    <a href="mailto:info@personacore.io" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Contact Us</a>
                 </div>
             </div>
+            <p style="text-align: center; margin-top: 40px; color: #86868b;">
+                🎉 <strong>Early Bird Special:</strong> First 3 creators get free AI creator setup. Limited spots.
+            </p>
         </div>
     </section>
+	
+	<section class="testimonials" style="padding: 80px 20px; background: #f5f5f7;">
+    <div class="container">
+        <h2 class="section-title">What Creators Say</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px;">
+            <div style="background: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <p style="font-style: italic; margin-bottom: 20px;">"My AI creator handles thousands of fan chats each month. Game changer!"</p>
+                <p style="font-weight: 600;">- YouTube Creator (250K subs)</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <p style="font-style: italic; margin-bottom: 20px;">"Fans love the 24/7 access. Engagement doubled."</p>
+                <p style="font-weight: 600;">- Twitch Streamer</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <!-- Login Section -->
-    <section id="login" class="login-section">
-        <div class="container">
-            <h2 class="section-title">Access Your Account</h2>
-            <div class="login-grid">
-                
-                <!-- Fan Login -->
-                <div class="login-card">
-                    <h3>👥 Fan Login</h3>
-                    <p>Access your saved chats</p>
-                    <form id="fan-login-form">
-                        <input 
-                            type="email" 
-                            id="fan-email"
-                            placeholder="Your email"
-                            required
-                        >
-                        <button type="submit">
-                            Send Magic Link
-                        </button>
-                    </form>
-                    
-                    <div id="fan-login-message" style="display: none; padding: 12px; border-radius: 8px; text-align: center; margin-top: 15px;"></div>
-                    
-                    <p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 15px;">
-                        We'll email you a secure login link
-                    </p>
+<!-- Login Section -->
+<section id="login" class="login-section" style="padding: 80px 20px; background: white;">
+    <div class="container" style="max-width: 1000px; margin: 0 auto;">
+        <h2 class="section-title">Already Have an Account?</h2>
+        <p class="section-subtitle">Access your chats or creator dashboard</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px; margin-top: 50px;">
+            
+            <!-- Fan Login -->
+            <div style="background: #f8f9fa; padding: 40px; border-radius: 20px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2em;">
+                        💬
+                    </div>
+                    <h3 style="color: #1a1a1a; font-size: 1.8em; margin-bottom: 10px;">Fan Login</h3>
+                    <p style="color: #666;">Continue your conversations</p>
                 </div>
                 
-                <!-- Creator Login -->
-                <div class="login-card">
-                    <h3>🎭 Creator Login</h3>
-                    <p>Access your dashboard</p>
-                    <form id="creator-login-form">
-                        <input 
-                            type="email" 
-                            id="creator-email"
-                            placeholder="Creator email"
-                            required
-                        >
-                        <button type="submit">
-                            Access Dashboard
-                        </button>
-                    </form>
-                    
-                    <div id="creator-login-message" style="display: none; padding: 12px; border-radius: 8px; text-align: center; margin-top: 15px;"></div>
-                    
-                    <p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 15px;">
-                        Not a creator yet? <a href="#pricing" style="color: #667eea; text-decoration: none; font-weight: 600;">Get started</a>
-                    </p>
-                </div>
+                <form id="fan-login-form" style="margin-bottom: 20px;">
+                    <input 
+                        type="email" 
+                        id="fan-email"
+                        placeholder="Enter your email"
+                        required
+                        style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; margin-bottom: 15px;"
+                    >
+                    <button 
+                        type="submit" 
+                        class="btn btn-primary" 
+                        style="width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 600; cursor: pointer;"
+                    >
+                        Send Magic Link
+                    </button>
+                </form>
                 
+                <div id="fan-login-message" style="display: none; padding: 12px; border-radius: 8px; text-align: center; margin-top: 15px;"></div>
+                
+                <p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 15px;">
+                    ✨ We'll email you a secure login link
+                </p>
             </div>
+            
+            <!-- Creator Login -->
+            <div style="background: #f8f9fa; padding: 40px; border-radius: 20px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2em;">
+                        🎭
+                    </div>
+                    <h3 style="color: #1a1a1a; font-size: 1.8em; margin-bottom: 10px;">Creator Dashboard</h3>
+                    <p style="color: #666;">Manage your AI creator</p>
+                </div>
+                
+                <form id="creator-login-form" style="margin-bottom: 20px;">
+                    <input 
+                        type="email" 
+                        id="creator-email"
+                        placeholder="Creator email"
+                        required
+                        style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; margin-bottom: 15px;"
+                    >
+                    <button 
+                        type="submit" 
+                        class="btn btn-primary" 
+                        style="width: 100%; padding: 15px; background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); color: white; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 600; cursor: pointer;"
+                    >
+                        Access Dashboard
+                    </button>
+                </form>
+                
+                <div id="creator-login-message" style="display: none; padding: 12px; border-radius: 8px; text-align: center; margin-top: 15px;"></div>
+                
+                <p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 15px;">
+                    Not a creator yet? <a href="#pricing" style="color: #667eea; text-decoration: none; font-weight: 600;">Get started</a>
+                </p>
+            </div>
+            
         </div>
-    </section>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+    // Supabase config
+    const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
+    
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Fan Login
+    document.getElementById('fan-login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('fan-email').value.trim();
+        const btn = e.target.querySelector('button');
+        const messageDiv = document.getElementById('fan-login-message');
+        
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        messageDiv.style.display = 'none';
+        
+        try {
+            const { error } = await supabaseClient.auth.signInWithOtp({
+                email: email,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/my-chats`
+                }
+            });
+            
+            if (error) throw error;
+            
+            messageDiv.style.background = '#d4edda';
+            messageDiv.style.color = '#155724';
+            messageDiv.textContent = '✓ Check your email! We sent you a magic link.';
+            messageDiv.style.display = 'block';
+            
+            btn.textContent = 'Email Sent!';
+            document.getElementById('fan-email').value = '';
+            
+        } catch (error) {
+            messageDiv.style.background = '#f8d7da';
+            messageDiv.style.color = '#721c24';
+            messageDiv.textContent = 'Error: ' + error.message;
+            messageDiv.style.display = 'block';
+            
+            btn.disabled = false;
+            btn.textContent = 'Send Magic Link';
+        }
+    });
+
+    // Creator Login
+    document.getElementById('creator-login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('creator-email').value.trim();
+        const btn = e.target.querySelector('button');
+        const messageDiv = document.getElementById('creator-login-message');
+        
+        btn.disabled = true;
+        btn.textContent = 'Checking...';
+        messageDiv.style.display = 'none';
+        
+        try {
+            const { data: creator, error: creatorError } = await supabaseClient
+                .from('creators')
+                .select('id, email, status')
+                .eq('email', email)
+                .single();
+            
+            if (creatorError || !creator) {
+                throw new Error('No creator account found with this email. Please sign up first.');
+            }
+            
+            if (creator.status !== 'active') {
+                throw new Error('Your creator account is pending approval. Check your email for updates.');
+            }
+            
+            const { error } = await supabaseClient.auth.signInWithOtp({
+                email: email,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/dashboard`
+                }
+            });
+            
+            if (error) throw error;
+            
+            messageDiv.style.background = '#d4edda';
+            messageDiv.style.color = '#155724';
+            messageDiv.textContent = '✓ Check your email for dashboard access link!';
+            messageDiv.style.display = 'block';
+            
+            btn.textContent = 'Email Sent!';
+            document.getElementById('creator-email').value = '';
+            
+        } catch (error) {
+            messageDiv.style.background = '#f8d7da';
+            messageDiv.style.color = '#721c24';
+            messageDiv.textContent = error.message;
+            messageDiv.style.display = 'block';
+            
+            btn.disabled = false;
+            btn.textContent = 'Access Dashboard';
+        }
+    });
+})();
+</script>
+
+<style>
+    .login-section button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s;
+    }
+    
+    .login-section button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .login-section input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+</style>
 
     <!-- FAQ -->
-    <section id="faq" class="faq">
-        <div class="container">
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <div class="faq-list">
+<section id="faq" class="faq">
+    <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
 
-                <div class="faq-item">
-                    <h3>How long does setup take?</h3>
-                    <p>Once you complete our questionnaire (which takes 2–3 hours), we'll build your AI creator within 3–5 working days. As soon as it's ready, your creator chat page will be live and ready to launch.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h3>Can I update my AI persona's personality?</h3>
-                    <p>Absolutely! Your AI creator should evolve with your fanbase. You can update your AI persona whenever you'd like by submitting new content or preferences.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h3>What happens if I exceed my message limit?</h3>
-                    <p>We'll send you a heads-up if you're getting close to your fair use message limit. If you're consistently over, we'll reach out to discuss a custom plan that works for you.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h3>Are there any ongoing costs?</h3>
-                    <p>No monthly fees. You only pay a one-time setup fee to build your AI creator. PersonaCore takes a 30% commission from any fan subscription revenue; the remaining 70% goes directly to you.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h3>Is my data secure?</h3>
-                    <p>Yes! We use Cloudflare's secure infrastructure and OpenAI's API. Your data is never sold or shared with third parties.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h3>What does the setup fee include?</h3>
-                    <p>The setup fee covers full AI creator creation, training using your custom questionnaire, and the launch of your personalized fan chat page. It's a one-time cost with no hidden fees.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h3>Can I remove or pause my AI creator?</h3>
-                    <p>Yes, you're always in control. If you ever want to pause or delete your AI persona, just contact us and we'll take care of it promptly.</p>
-                </div>
-
-                <div class="faq-item">
-                    <h3>How do fans chat with my AI creator?</h3>
-                    <p>Fans can interact with your AI creator via your public chat page. Each message is designed to reflect your personality and tone, creating a unique fan experience.</p>
-                </div>
-
+            <div class="faq-item">
+                <h3>How long does setup take?</h3>
+                <p>Once you complete our questionnaire (which takes 2–3 hours), we'll build your AI creator within 3–5 working days. As soon as it's ready, your creator chat page will be live and ready to launch.</p>
             </div>
+
+            <div class="faq-item">
+                <h3>Can I update my AI persona's personality?</h3>
+                <p>Absolutely! Your AI creator should evolve with your fanbase. You can update your AI persona whenever you'd like by submitting new content or preferences.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>What happens if I exceed my message limit?</h3>
+                <p>We'll send you a heads-up if you're getting close to your fair use message limit. If you're consistently over, we'll reach out to discuss a custom plan that works for you.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Are there any ongoing costs?</h3>
+                <p>No monthly fees. You only pay a one-time setup fee to build your AI creator. PersonaCore takes a 30% commission from any fan subscription revenue; the remaining 70% goes directly to you.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Is my data secure?</h3>
+                <p>Yes! We use Cloudflare's secure infrastructure and OpenAI's API. Your data is never sold or shared with third parties.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>What does the setup fee include?</h3>
+                <p>The setup fee covers full AI creator creation, training using your custom questionnaire, and the launch of your personalized fan chat page. It's a one-time cost with no hidden fees.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Can I remove or pause my AI creator?</h3>
+                <p>Yes, you're always in control. If you ever want to pause or delete your AI persona, just contact us and we'll take care of it promptly.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>How do fans chat with my AI creator?</h3>
+                <p>Fans can interact with your AI creator via your public chat page. Each message is designed to reflect your personality and tone, creating a unique fan experience.</p>
+            </div>
+
         </div>
-    </section>
+    </div>
+</section>
+
 
     <!-- Final CTA -->
     <section class="cta-section">
@@ -857,11 +994,12 @@
 
     <!-- Footer -->
     <footer>
-        <div class="footer-content">
-            <div style="margin-top: 20px;">
-                <a href="/privacy" style="color: #86868b; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
-                <a href="/terms" style="color: #86868b; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-            </div>
+    <div class="footer-content">
+        <div style="margin-top: 20px;">
+            <a href="/privacy" style="color: #86868b; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
+            <a href="/terms" style="color: #86868b; text-decoration: none; margin: 0 10px;">Terms of Service</a>
+        </div>
+    </div>
             <div class="social-links">
                 <a href="https://twitter.com/personacoreai" target="_blank">Twitter/X</a>
                 <a href="https://instagram.com/personacoreio" target="_blank">Instagram</a>
@@ -873,114 +1011,5 @@
             </p>
         </div>
     </footer>
-
-    <!-- Supabase & Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-    (function() {
-        // Supabase config
-        const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
-        
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Fan Login
-        document.getElementById('fan-login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('fan-email').value.trim();
-            const btn = e.target.querySelector('button');
-            const messageDiv = document.getElementById('fan-login-message');
-            
-            btn.disabled = true;
-            btn.textContent = 'Sending...';
-            messageDiv.style.display = 'none';
-            
-            try {
-                const { error } = await supabaseClient.auth.signInWithOtp({
-                    email: email,
-                    options: {
-                        emailRedirectTo: `${window.location.origin}/my-chats`
-                    }
-                });
-                
-                if (error) throw error;
-                
-                messageDiv.style.background = '#d4edda';
-                messageDiv.style.color = '#155724';
-                messageDiv.textContent = '✓ Check your email! We sent you a magic link.';
-                messageDiv.style.display = 'block';
-                
-                btn.textContent = 'Email Sent!';
-                document.getElementById('fan-email').value = '';
-                
-            } catch (error) {
-                messageDiv.style.background = '#f8d7da';
-                messageDiv.style.color = '#721c24';
-                messageDiv.textContent = 'Error: ' + error.message;
-                messageDiv.style.display = 'block';
-                
-                btn.disabled = false;
-                btn.textContent = 'Send Magic Link';
-            }
-        });
-
-        // Creator Login
-        document.getElementById('creator-login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('creator-email').value.trim();
-            const btn = e.target.querySelector('button');
-            const messageDiv = document.getElementById('creator-login-message');
-            
-            btn.disabled = true;
-            btn.textContent = 'Checking...';
-            messageDiv.style.display = 'none';
-            
-            try {
-                const { data: creator, error: creatorError } = await supabaseClient
-                    .from('creators')
-                    .select('id, email, status')
-                    .eq('email', email)
-                    .single();
-                
-                if (creatorError || !creator) {
-                    throw new Error('No creator account found with this email. Please sign up first.');
-                }
-                
-                if (creator.status !== 'active') {
-                    throw new Error('Your creator account is pending approval. Check your email for updates.');
-                }
-                
-                const { error } = await supabaseClient.auth.signInWithOtp({
-                    email: email,
-                    options: {
-                        emailRedirectTo: `${window.location.origin}/dashboard`
-                    }
-                });
-                
-                if (error) throw error;
-                
-                messageDiv.style.background = '#d4edda';
-                messageDiv.style.color = '#155724';
-                messageDiv.textContent = '✓ Check your email for dashboard access link!';
-                messageDiv.style.display = 'block';
-                
-                btn.textContent = 'Email Sent!';
-                document.getElementById('creator-email').value = '';
-                
-            } catch (error) {
-                messageDiv.style.background = '#f8d7da';
-                messageDiv.style.color = '#721c24';
-                messageDiv.textContent = error.message;
-                messageDiv.style.display = 'block';
-                
-                btn.disabled = false;
-                btn.textContent = 'Access Dashboard';
-            }
-        });
-    })();
-    </script>
 </body>
 </html>
