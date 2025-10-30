@@ -667,14 +667,14 @@
                     
                     <div class="stat-card">
                         <div class="stat-label">Monthly Revenue</div>
-                        <div class="stat-value">£${(parseFloat(summary.monthly_profit_gbp) || 0).toFixed(2)}</div>
+                        <div class="stat-value">£${(parseFloat(summary.monthly_revenue_gbp) || 0).toFixed(2)}</div>
                         <div class="stat-trend neutral">From subscriptions</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-label">Monthly Profit</div>
-                        <div class="stat-value">£${(summary.monthly_profit_gbp || 0).toFixed(2)}</div>
-                        <div class="stat-trend ${profitClass}">After AI costs (£${(summary.cost_this_month_gbp || 0).toFixed(2)})</div>
+                        <div class="stat-value">£${(parseFloat(summary.monthly_profit_gbp) || 0).toFixed(2)}</div>
+                        <div class="stat-trend ${profitClass}">After AI costs (£${(parseFloat(summary.cost_this_month_gbp) || 0).toFixed(2)})</div>
                     </div>
                 </div>
                 
