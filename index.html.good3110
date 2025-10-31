@@ -2,11 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- iOS-optimized viewport -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Persona Core - AI Creators for Content Creators</title>
     <meta name="description" content="AI creators for content creators. Engage your fans 24/7 with your personal AI. £299 setup fee.">
     <style>
@@ -17,48 +13,6 @@
             line-height: 1.6;
             color: #1d1d1f;
             overflow-x: hidden;
-            -webkit-text-size-adjust: 100%; /* iOS text size fix */
-            padding-top: 60px; /* Space for fixed header */
-        }
-
-        /* Fixed Navigation Header */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 15px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        nav img {
-            height: 30px;
-        }
-
-        nav .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #1d1d1f;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: #667eea;
         }
 
         /* Hero Section */
@@ -128,9 +82,6 @@
             cursor: pointer;
             border: none;
             display: inline-block;
-            /* iOS touch improvements */
-            -webkit-tap-highlight-color: transparent;
-            min-height: 48px; /* iOS touch target */
         }
 
         .btn-primary {
@@ -320,12 +271,6 @@
             margin-right: 10px;
         }
 
-        .note {
-            font-size: 0.85em;
-            color: #86868b;
-            font-weight: normal;
-        }
-
         /* FAQ */
         .faq {
             padding: 80px 20px;
@@ -418,152 +363,34 @@
             margin-top: 20px;
         }
 
-        /* Input fields - iOS zoom fix */
-        input[type="email"] {
-            font-size: 16px !important; /* Prevents iOS zoom */
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            body {
-                padding-top: 50px;
-            }
-
-            /* Navigation mobile */
-            header {
-                padding: 10px 15px;
-            }
-
-            nav img {
-                height: 25px;
-            }
-
-            nav .nav-links {
-                gap: 15px;
-                font-size: 0.9rem;
-            }
-
-            /* Hero mobile */
             h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero {
-                padding: 50px 20px 80px;
+                font-size: 2.5rem;
             }
 
             .hero p {
                 font-size: 1.1rem;
             }
 
-            .logo img {
-                height: 50px;
-            }
-
-            /* Sections mobile */
             .section-title {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
 
-            .section-subtitle {
-                font-size: 1rem;
-            }
-
-            .demo-section,
-            .how-it-works,
-            .pricing,
-            .faq {
-                padding: 60px 20px;
-            }
-
-            /* Buttons mobile */
             .cta-buttons {
                 flex-direction: column;
             }
 
             .btn {
                 width: 100%;
-                padding: 14px 30px;
-                font-size: 1rem;
-            }
-
-            /* Demo iframe mobile */
-            .demo-container {
-                max-width: 100%;
             }
 
             .demo-container iframe {
                 height: 550px;
             }
-
-            /* Steps mobile */
-            .steps {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            /* Pricing mobile */
-            .pricing-cards {
-                grid-template-columns: 1fr;
-            }
-
-            /* CTA mobile */
-            .cta-section {
-                padding: 60px 20px;
-            }
-
-            .cta-section h2 {
-                font-size: 1.8rem;
-            }
-
-            .cta-section p {
-                font-size: 1.1rem;
-            }
-
-            /* Footer mobile */
-            .social-links {
-                flex-wrap: wrap;
-            }
-        }
-
-        /* Very small screens */
-        @media (max-width: 375px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            nav .nav-links {
-                gap: 10px;
-                font-size: 0.8rem;
-            }
-
-            .demo-container iframe {
-                height: 500px;
-            }
-
-            .section-title {
-                font-size: 1.6rem;
-            }
-        }
-
-        /* Landscape mode on mobile */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .hero {
-                padding: 30px 20px 50px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .demo-container iframe {
-                height: 400px;
-            }
         }
     </style>
-    <!-- Add before closing head tag -->
+	<!-- Add before closing head tag -->
 <script>
     // Track button clicks
     document.querySelectorAll('.btn').forEach(button => {
@@ -575,21 +402,19 @@
 </script>
 </head>
 <body>
-
-<!-- Fixed Navigation Header -->
-<header>
-    <nav>
-        <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" alt="Persona Core">
-        <div class="nav-links">
-            <a href="#demo">Demo</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQ</a>
+<!-- Add this before the hero section -->
+<header style="position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 15px 20px;">
+    <nav style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <img src="https://movietwin-widget.pages.dev/assets/personacore-logo.png" alt="Persona Core" style="height: 30px;">
+        <div style="display: flex; gap: 30px;">
+            <a href="#demo" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">Demo</a>
+            <a href="#how-it-works" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">How It Works</a>
+            <a href="#pricing" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">Pricing</a>
+            <a href="#faq" style="text-decoration: none; color: #1d1d1f; font-weight: 500;">FAQ</a>
         </div>
     </nav>
 </header>
-
-<!-- Hero Section -->
+    <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
         <div class="logo" style="margin-bottom: 30px;">
@@ -600,9 +425,9 @@
         <h1>AI Twins for Creators</h1>
             <p>Let your fans chat with your AI personality 24/7. Scale your fan engagement without the burnout.</p>
             <div class="cta-buttons">
-                <a href="/onboard/" class="btn btn-primary">Get Started</a>
+                <a href="#pricing" class="btn btn-primary">See Pricing</a>
                 <a href="#demo" class="btn btn-secondary">Try Demo</a>
-				<a href="#pricing" class="btn btn-primary">See Pricing</a>
+				<a href="#faq" class="btn btn-primary">FAQs</a>
 				<a href="#how-it-works" class="btn btn-primary">How Does It Work?</a>
             </div>
         </div>
@@ -646,18 +471,18 @@
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Complete Our Questionnaire</h3>
-                    <p>Tell us about your style, expertise, and personality. This takes 2-3 hours but ensures your AI creator is authentically you.</p>
+                    <h3>Tell Us About You</h3>
+                    <p>Fill out our simple questionnaire about your style, topics, and personality.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>We Build Your AI Creator</h3>
-                    <p>Our team trains your personal AI creator using your questionnaire. Ready in 3-5 working days.</p>
+                    <h3>We Build Your Twin</h3>
+                    <p>Our team creates your AI personality and tests it to perfection.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Share & Earn</h3>
-                    <p>We provide your unique PersonaCore link. Share it with fans who subscribe and chat with your AI - you keep 70% of revenue.</p>
+                    <h3>Embed & Launch</h3>
+                    <p>Your AI creator goes live on our website. Start engaging instantly.</p>
                 </div>
             </div>
         </div>
@@ -669,7 +494,6 @@
             <h2 class="section-title">Simple, Transparent Pricing</h2>
             <p class="section-subtitle">Creators pay a one-off setup fee, we do the rest</p>
             <div class="pricing-cards">
-                <!-- Original Pricing Card -->
                 <div class="pricing-card featured">
                     <span class="badge">Full Setup Included</span>
                     <h3>Creator Plan</h3>
@@ -684,23 +508,7 @@
 						<li>Your dedicated PersonaCore page</li>
 						<li>Standard email support</li>
                     </ul>
-                    <a href="/onboard/" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</a>
-                </div>
-
-                <!-- Revenue Split Card (NEW - as requested) -->
-                <div class="pricing-card">
-                    <span class="badge">Revenue Share</span>
-                    <h3>Ongoing</h3>
-                    <div class="price">30/70<span></div>
-                    <p style="color: #86868b; margin-bottom: 20px;">Commission split</p>
-                    <ul class="features">
-                        <li>You keep 70% of revenue</li>
-                        <li>PersonaCore takes 30%</li>
-                        <li>No monthly fees</li>
-                        <li>Fair use message limits</li>
-                        <li>Unlimited fan subscriptions</li>
-                    </ul>
-                    <a href="mailto:info@personacore.io" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Contact Us</a>
+                    <a href="mailto:hello@personacore.io?subject=Creator Plan" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</a>
                 </div>
             </div>
             <p style="text-align: center; margin-top: 40px; color: #86868b;">
@@ -749,7 +557,7 @@
                         id="fan-email"
                         placeholder="Enter your email"
                         required
-                        style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; margin-bottom: 15px;"
+                        style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1em; margin-bottom: 15px;"
                     >
                     <button 
                         type="submit" 
@@ -763,7 +571,7 @@
                 <div id="fan-login-message" style="display: none; padding: 12px; border-radius: 8px; text-align: center; margin-top: 15px;"></div>
                 
                 <p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 15px;">
-                    ✨ We'll email you a secure login link
+                    We'll email you a secure login link
                 </p>
             </div>
             
@@ -773,8 +581,8 @@
                     <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2em;">
                         🎭
                     </div>
-                    <h3 style="color: #1a1a1a; font-size: 1.8em; margin-bottom: 10px;">Creator Dashboard</h3>
-                    <p style="color: #666;">Manage your AI creator</p>
+                    <h3 style="color: #1a1a1a; font-size: 1.8em; margin-bottom: 10px;">Creator Login</h3>
+                    <p style="color: #666;">Access your dashboard</p>
                 </div>
                 
                 <form id="creator-login-form" style="margin-bottom: 20px;">
@@ -783,7 +591,7 @@
                         id="creator-email"
                         placeholder="Creator email"
                         required
-                        style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; margin-bottom: 15px;"
+                        style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1em; margin-bottom: 15px;"
                     >
                     <button 
                         type="submit" 
@@ -797,7 +605,7 @@
                 <div id="creator-login-message" style="display: none; padding: 12px; border-radius: 8px; text-align: center; margin-top: 15px;"></div>
                 
                 <p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 15px;">
-                    Not a creator yet? <a href="/onboard/" style="color: #667eea; text-decoration: none; font-weight: 600;">Get started</a>
+                    Not a creator yet? <a href="#pricing" style="color: #667eea; text-decoration: none; font-weight: 600;">Get started</a>
                 </p>
             </div>
             
@@ -940,7 +748,7 @@
 
             <div class="faq-item">
                 <h3>How long does setup take?</h3>
-                <p>Once you complete our questionnaire (which takes 2–3 hours), we'll build your AI creator within 3–5 working days. As soon as it's ready, your creator chat page will be live and ready to launch.</p>
+                <p>Once you complete our questionnaire (which takes 2–3 hours), we’ll build your AI creator within 3–5 working days. As soon as it’s ready, your creator chat page will be live and ready to launch.</p>
             </div>
 
             <div class="faq-item">
@@ -950,7 +758,7 @@
 
             <div class="faq-item">
                 <h3>What happens if I exceed my message limit?</h3>
-                <p>We'll send you a heads-up if you're getting close to your fair use message limit. If you're consistently over, we'll reach out to discuss a custom plan that works for you.</p>
+                <p>We’ll send you a heads-up if you're getting close to your fair use message limit. If you're consistently over, we’ll reach out to discuss a custom plan that works for you.</p>
             </div>
 
             <div class="faq-item">
@@ -960,17 +768,17 @@
 
             <div class="faq-item">
                 <h3>Is my data secure?</h3>
-                <p>Yes! We use Cloudflare's secure infrastructure and OpenAI's API. Your data is never sold or shared with third parties.</p>
+                <p>Yes! We use Cloudflare's secure infrastructure and OpenAI’s API. Your data is never sold or shared with third parties.</p>
             </div>
 
             <div class="faq-item">
                 <h3>What does the setup fee include?</h3>
-                <p>The setup fee covers full AI creator creation, training using your custom questionnaire, and the launch of your personalized fan chat page. It's a one-time cost with no hidden fees.</p>
+                <p>The setup fee covers full AI creator creation, training using your custom questionnaire, and the launch of your personalized fan chat page. It’s a one-time cost with no hidden fees.</p>
             </div>
 
             <div class="faq-item">
                 <h3>Can I remove or pause my AI creator?</h3>
-                <p>Yes, you're always in control. If you ever want to pause or delete your AI persona, just contact us and we'll take care of it promptly.</p>
+                <p>Yes, you're always in control. If you ever want to pause or delete your AI persona, just contact us and we’ll take care of it promptly.</p>
             </div>
 
             <div class="faq-item">
@@ -988,7 +796,7 @@
         <div class="container">
             <h2>Ready to Scale Your Engagement?</h2>
             <p>Join the creators who are already using AI creators to connect with their fans 24/7</p>
-            <a href="/onboard/" class="btn btn-primary">Get Your Twin Today</a>
+            <a href="mailto:info@personacore.io?subject=Get Started" class="btn btn-primary">Get Your Twin Today</a>
         </div>
     </section>
 
@@ -998,8 +806,6 @@
         <div style="margin-top: 20px;">
             <a href="/privacy" style="color: #86868b; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
             <a href="/terms" style="color: #86868b; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-			<a href="/cookies">Cookie Policy</a>
-			<a href="mailto:info@personacore.io?subject=CCPA Do Not Sell Request">Do Not Sell My Personal Information</a>
         </div>
     </div>
             <div class="social-links">
@@ -1009,48 +815,9 @@
             </div>
             <p>© 2025 Persona Core Ltd. All rights reserved.</p>
             <p style="margin-top: 10px;">
-                <a href="mailto:hello@personacore.io" style="color: #667eea; text-decoration: none;">hello@personacore.io</a>
+                <a href="mailto:infoo@personacore.io" style="color: #667eea; text-decoration: none;">hello@personacore.io</a>
             </p>
         </div>
     </footer>
-	<!-- Cookie Consent Banner -->
-<div id="cookie-consent-banner" style="position: fixed; bottom: 0; left: 0; right: 0; background: #1d1d1f; color: white; padding: 20px; display: none; z-index: 9999; box-shadow: 0 -2px 10px rgba(0,0,0,0.3);">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-        <div style="flex: 1; min-width: 300px;">
-            <p style="margin: 0; font-size: 14px;">
-                We use cookies to improve your experience and analyze site traffic. By clicking "Accept All," you consent to our use of cookies. 
-                <a href="/cookies" style="color: #667eea; text-decoration: underline;">Learn more</a>
-            </p>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="acceptCookies()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600;">Accept All</button>
-            <button onclick="rejectCookies()" style="background: transparent; color: white; border: 2px solid white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600;">Reject Non-Essential</button>
-        </div>
-    </div>
-</div>
-
-<script>
-// Check if user has already responded to cookie consent
-window.addEventListener('DOMContentLoaded', function() {
-    const cookieConsent = localStorage.getItem('cookieConsent');
-    if (!cookieConsent) {
-        document.getElementById('cookie-consent-banner').style.display = 'block';
-    }
-});
-
-function acceptCookies() {
-    localStorage.setItem('cookieConsent', 'accepted');
-    document.getElementById('cookie-consent-banner').style.display = 'none';
-    // Enable analytics/tracking here if needed
-    console.log('Cookies accepted');
-}
-
-function rejectCookies() {
-    localStorage.setItem('cookieConsent', 'rejected');
-    document.getElementById('cookie-consent-banner').style.display = 'none';
-    // Disable non-essential cookies here
-    console.log('Non-essential cookies rejected');
-}
-</script>
 </body>
 </html>

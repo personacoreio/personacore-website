@@ -600,9 +600,9 @@
         <h1>AI Twins for Creators</h1>
             <p>Let your fans chat with your AI personality 24/7. Scale your fan engagement without the burnout.</p>
             <div class="cta-buttons">
-                <a href="/onboard/" class="btn btn-primary">Get Started</a>
+                <a href="#pricing" class="btn btn-primary">See Pricing</a>
                 <a href="#demo" class="btn btn-secondary">Try Demo</a>
-				<a href="#pricing" class="btn btn-primary">See Pricing</a>
+				<a href="#faq" class="btn btn-primary">FAQs</a>
 				<a href="#how-it-works" class="btn btn-primary">How Does It Work?</a>
             </div>
         </div>
@@ -684,7 +684,7 @@
 						<li>Your dedicated PersonaCore page</li>
 						<li>Standard email support</li>
                     </ul>
-                    <a href="/onboard/" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</a>
+                    <a href="mailto:hello@personacore.io?subject=Creator Plan" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</a>
                 </div>
 
                 <!-- Revenue Split Card (NEW - as requested) -->
@@ -797,7 +797,7 @@
                 <div id="creator-login-message" style="display: none; padding: 12px; border-radius: 8px; text-align: center; margin-top: 15px;"></div>
                 
                 <p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 15px;">
-                    Not a creator yet? <a href="/onboard/" style="color: #667eea; text-decoration: none; font-weight: 600;">Get started</a>
+                    Not a creator yet? <a href="#pricing" style="color: #667eea; text-decoration: none; font-weight: 600;">Get started</a>
                 </p>
             </div>
             
@@ -988,7 +988,7 @@
         <div class="container">
             <h2>Ready to Scale Your Engagement?</h2>
             <p>Join the creators who are already using AI creators to connect with their fans 24/7</p>
-            <a href="/onboard/" class="btn btn-primary">Get Your Twin Today</a>
+            <a href="mailto:info@personacore.io?subject=Get Started" class="btn btn-primary">Get Your Twin Today</a>
         </div>
     </section>
 
@@ -998,8 +998,6 @@
         <div style="margin-top: 20px;">
             <a href="/privacy" style="color: #86868b; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
             <a href="/terms" style="color: #86868b; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-			<a href="/cookies">Cookie Policy</a>
-			<a href="mailto:info@personacore.io?subject=CCPA Do Not Sell Request">Do Not Sell My Personal Information</a>
         </div>
     </div>
             <div class="social-links">
@@ -1013,44 +1011,5 @@
             </p>
         </div>
     </footer>
-	<!-- Cookie Consent Banner -->
-<div id="cookie-consent-banner" style="position: fixed; bottom: 0; left: 0; right: 0; background: #1d1d1f; color: white; padding: 20px; display: none; z-index: 9999; box-shadow: 0 -2px 10px rgba(0,0,0,0.3);">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-        <div style="flex: 1; min-width: 300px;">
-            <p style="margin: 0; font-size: 14px;">
-                We use cookies to improve your experience and analyze site traffic. By clicking "Accept All," you consent to our use of cookies. 
-                <a href="/cookies" style="color: #667eea; text-decoration: underline;">Learn more</a>
-            </p>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="acceptCookies()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600;">Accept All</button>
-            <button onclick="rejectCookies()" style="background: transparent; color: white; border: 2px solid white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600;">Reject Non-Essential</button>
-        </div>
-    </div>
-</div>
-
-<script>
-// Check if user has already responded to cookie consent
-window.addEventListener('DOMContentLoaded', function() {
-    const cookieConsent = localStorage.getItem('cookieConsent');
-    if (!cookieConsent) {
-        document.getElementById('cookie-consent-banner').style.display = 'block';
-    }
-});
-
-function acceptCookies() {
-    localStorage.setItem('cookieConsent', 'accepted');
-    document.getElementById('cookie-consent-banner').style.display = 'none';
-    // Enable analytics/tracking here if needed
-    console.log('Cookies accepted');
-}
-
-function rejectCookies() {
-    localStorage.setItem('cookieConsent', 'rejected');
-    document.getElementById('cookie-consent-banner').style.display = 'none';
-    // Disable non-essential cookies here
-    console.log('Non-essential cookies rejected');
-}
-</script>
 </body>
 </html>
