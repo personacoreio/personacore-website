@@ -1,2 +1,5 @@
 /join/*  /join/index.html  200
 /*       /index.html       200
+/privacy    /privacy-policy.html    200
+/terms      /terms-of-service.html  200
+/cookies    /cookie-policy.html     200
