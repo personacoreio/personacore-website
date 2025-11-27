@@ -492,15 +492,22 @@
         
         async function loadCreators() {
             try {
-                const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/creators?select=slug,name&order=name`,
-                    {
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                        }
+                const token = localStorage.getItem('admin_token');
+                if (!token) {
+                    console.error('No admin token found');
+                    return;
+                }
+                
+                const response = await fetch('/api/admin/creators', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
                     }
-                );
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch creators');
+                }
+                
                 const creators = await response.json();
                 
                 const select = document.getElementById('creatorSelect');
@@ -536,68 +543,52 @@
         }
         
         async function getCreatorSummary(creatorSlug) {
-            const response = await fetch(
-                `${SUPABASE_URL}/rest/v1/creator_analytics_summary?creator_slug=eq.${creatorSlug}`,
-                {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                }
-            );
-            const data = await response.json();
-            return data[0] || {};
+            const response = await fetch(`/api/creator/summary?slug=${creatorSlug}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch creator summary');
+            }
+            
+            return await response.json();
         }
         
         async function getTopFans(creatorSlug) {
-            const response = await fetch(
-                `${SUPABASE_URL}/rest/v1/fan_engagement_detailed?creator_slug=eq.${creatorSlug}&order=engagement_score.desc&limit=10`,
-                {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                }
-            );
+            const response = await fetch(`/api/creator/top-fans?slug=${creatorSlug}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch top fans');
+            }
+            
             return await response.json();
         }
         
         async function getTrendingTopics(creatorSlug) {
-            const response = await fetch(
-                `${SUPABASE_URL}/rest/v1/trending_topics_analysis?creator_slug=eq.${creatorSlug}&order=mention_count.desc&limit=10`,
-                {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                }
-            );
+            const response = await fetch(`/api/creator/trending-topics?slug=${creatorSlug}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch trending topics');
+            }
+            
             return await response.json();
         }
         
         async function getContentGaps(creatorSlug) {
-            const response = await fetch(
-                `${SUPABASE_URL}/rest/v1/content_gap_opportunities?creator_slug=eq.${creatorSlug}&content_opportunity=neq.Adequate Response&order=created_at.desc&limit=10`,
-                {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                }
-            );
+            const response = await fetch(`/api/creator/content-gaps?slug=${creatorSlug}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch content gaps');
+            }
+            
             return await response.json();
         }
         
         async function getDailyCosts(creatorSlug) {
-            const response = await fetch(
-                `${SUPABASE_URL}/rest/v1/daily_cost_breakdown?creator_slug=eq.${creatorSlug}&order=date.desc&limit=30`,
-                {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                }
-            );
+            const response = await fetch(`/api/creator/daily-costs?slug=${creatorSlug}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch daily costs');
+            }
+            
             return await response.json();
         }
         
