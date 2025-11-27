@@ -600,7 +600,7 @@
         async function getMetrics() {
             const response = await fetch('/api/admin/dashboard/metrics', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                    'Authorization': `Bearer ${authToken}`
                 }
             });
             
@@ -614,7 +614,7 @@
         async function getSystemCosts() {
             const response = await fetch('/api/admin/dashboard/costs', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                    'Authorization': `Bearer ${authToken}`
                 }
             });
             
@@ -679,15 +679,14 @@
         
         async function loadCreators() {
             try {
-                const token = localStorage.getItem('admin_token');
-                if (!token) {
+                if (!authToken) {
                     console.error('No admin token found');
                     return;
                 }
                 
                 const response = await fetch('/api/admin/creators', {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${authToken}`
                     }
                 });
                 
