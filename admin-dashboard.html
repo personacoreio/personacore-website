@@ -331,9 +331,105 @@
                 padding: 8px;
             }
         }
+        
+        /* Login Overlay */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .login-overlay.hidden {
+            display: none;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .login-box h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .login-box p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .login-btn:hover {
+            opacity: 0.9;
+        }
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-box">
+            <h2>🔐 Admin Login</h2>
+            <p>Sign in to access the admin dashboard</p>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <input 
+                type="email" 
+                id="adminEmail" 
+                class="login-input" 
+                placeholder="Admin Email"
+                value="support@personacore.io"
+            >
+            
+            <input 
+                type="password" 
+                id="adminPassword" 
+                class="login-input" 
+                placeholder="Password"
+            >
+            
+            <button onclick="adminLogin()" id="loginBtn" class="login-btn">
+                Sign In
+            </button>
+        </div>
+    </div>
+
     <!-- Header -->
     <div class="header">
         <a href="/" class="logo">PersonaCore Admin</a>
@@ -365,6 +461,97 @@
     <script>
         // Configuration
         // No API keys needed - all calls go through secure Pages Functions
+        
+        // Authentication
+        let authToken = null;
+        let currentUser = null;
+
+        function checkAuth() {
+            const stored = localStorage.getItem('admin_session');
+            if (stored) {
+                try {
+                    const session = JSON.parse(stored);
+                    authToken = session.access_token;
+                    currentUser = session.user;
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    init();
+                } catch (error) {
+                    console.error('Invalid session:', error);
+                    showLoginForm();
+                }
+            } else {
+                showLoginForm();
+            }
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginOverlay').classList.remove('hidden');
+        }
+
+        async function adminLogin() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const btn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            errorDiv.style.display = 'none';
+            
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+
+                // Store session
+                authToken = data.access_token;
+                currentUser = data.user;
+                localStorage.setItem('admin_session', JSON.stringify(data));
+                localStorage.setItem('admin_token', data.access_token); // For compatibility
+
+                console.log('✅ Logged in successfully:', currentUser.email);
+                
+                // Hide login and load dashboard
+                document.getElementById('loginOverlay').classList.add('hidden');
+                init();
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(error.message);
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        }
+
+        function showError(text) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = '❌ ' + text;
+            errorDiv.style.display = 'block';
+        }
+
+        // Enter key support for password field
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') adminLogin();
+            });
+            
+            // Check auth on page load
+            checkAuth();
+        });
         
         async function init() {
             await loadSystemOverview();
