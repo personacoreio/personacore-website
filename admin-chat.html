@@ -521,8 +521,8 @@
 
                 const data = await response.json();
                 
-                if (data.response) {
-                    addMessage(data.response, 'ai');
+                if (data.reply) {
+                    addMessage(data.reply, 'ai');
                 } else {
                     addMessage('❌ Error: ' + (data.error || 'Unknown error'), 'ai');
                 }
