@@ -466,17 +466,41 @@
         let authToken = null;
         let currentUser = null;
 
-        function checkAuth() {
+        async function checkAuth() {
             const stored = localStorage.getItem('admin_session');
             if (stored) {
                 try {
                     const session = JSON.parse(stored);
                     authToken = session.access_token;
                     currentUser = session.user;
+                    
+                    // Validate token by trying to fetch metrics
+                    const testResponse = await fetch('/api/admin/dashboard/metrics', {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+                    
+                    if (!testResponse.ok) {
+                        // Token is invalid or expired
+                        console.log('Token expired or invalid, clearing session');
+                        localStorage.removeItem('admin_session');
+                        localStorage.removeItem('admin_token');
+                        authToken = null;
+                        currentUser = null;
+                        showLoginForm();
+                        return;
+                    }
+                    
+                    // Token is valid
                     document.getElementById('loginOverlay').classList.add('hidden');
                     init();
                 } catch (error) {
-                    console.error('Invalid session:', error);
+                    console.error('Session validation error:', error);
+                    localStorage.removeItem('admin_session');
+                    localStorage.removeItem('admin_token');
+                    authToken = null;
+                    currentUser = null;
                     showLoginForm();
                 }
             } else {
@@ -544,13 +568,13 @@
         }
 
         // Enter key support for password field
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') adminLogin();
             });
             
             // Check auth on page load
-            checkAuth();
+            await checkAuth();
         });
         
         async function init() {
