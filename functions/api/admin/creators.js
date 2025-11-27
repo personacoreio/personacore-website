@@ -1,24 +1,14 @@
 // functions/api/admin/creators.js
-// Get list of all creators
+// Get list of all creators (public endpoint)
 
 export async function onRequestGet(context) {
-  const authHeader = context.request.headers.get('Authorization');
-  
-  if (!authHeader) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
   try {
-    // Get creators from Supabase
+    // Get creators from Supabase (uses anon key for public data)
     const response = await fetch(
-      `${context.env.SUPABASE_URL}/rest/v1/creators?status=eq.active&order=name`,
+      `${context.env.SUPABASE_URL}/rest/v1/creators?status=eq.active&select=id,name,slug&order=name`,
       {
         headers: {
           'apikey': context.env.SUPABASE_ANON_KEY,
-          'Authorization': authHeader,
           'Content-Type': 'application/json'
         }
       }
@@ -27,7 +17,11 @@ export async function onRequestGet(context) {
     const data = await response.json();
     
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: 'Failed to fetch creators' }), {
+      console.error('Supabase error:', data);
+      return new Response(JSON.stringify({ 
+        error: 'Failed to fetch creators',
+        details: data 
+      }), {
         status: response.status,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -39,6 +33,7 @@ export async function onRequestGet(context) {
     });
     
   } catch (error) {
+    console.error('Creators endpoint error:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
