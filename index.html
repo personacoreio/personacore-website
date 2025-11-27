@@ -700,7 +700,7 @@
                         <li>Fair use message limits</li>
                         <li>Unlimited fan subscriptions</li>
                     </ul>
-                    <a href="mailto:info@personacore.io" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Contact Us</a>
+                    <a href="/cdn-cgi/l/email-protection#aec7c0c8c1eedecbdcddc1c0cfcdc1dccb80c7c1" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Contact Us</a>
                 </div>
             </div>
             <p style="text-align: center; margin-top: 40px; color: #86868b;">
@@ -805,15 +805,10 @@
     </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
 (function() {
-    // Supabase config
-    const SUPABASE_URL = 'https://hmcartafonsppirzmtoq.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY2FydGFmb25zcHBpcnptdG9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTY3NDgsImV4cCI6MjA3NjMzMjc0OH0.EaMPCzwnnCN0R-S_AzNrFVAAn2AYU030Cx_5vS9vYpg';
-    
-    const { createClient } = supabase;
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // No API keys needed - all calls go through secure Pages Functions
 
     // Fan Login
     document.getElementById('fan-login-form').addEventListener('submit', async (e) => {
@@ -828,14 +823,17 @@
         messageDiv.style.display = 'none';
         
         try {
-            const { error } = await supabaseClient.auth.signInWithOtp({
-                email: email,
-                options: {
-                    emailRedirectTo: `${window.location.origin}/my-chats`
-                }
+            const response = await fetch('/api/auth/fan-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
             });
+
+            const data = await response.json();
             
-            if (error) throw error;
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send magic link');
+            }
             
             messageDiv.style.background = '#d4edda';
             messageDiv.style.color = '#155724';
@@ -869,28 +867,17 @@
         messageDiv.style.display = 'none';
         
         try {
-            const { data: creator, error: creatorError } = await supabaseClient
-                .from('creators')
-                .select('id, email, status')
-                .eq('email', email)
-                .single();
-            
-            if (creatorError || !creator) {
-                throw new Error('No creator account found with this email. Please sign up first.');
-            }
-            
-            if (creator.status !== 'active') {
-                throw new Error('Your creator account is pending approval. Check your email for updates.');
-            }
-            
-            const { error } = await supabaseClient.auth.signInWithOtp({
-                email: email,
-                options: {
-                    emailRedirectTo: `${window.location.origin}/dashboard`
-                }
+            const response = await fetch('/api/auth/creator-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
             });
+
+            const data = await response.json();
             
-            if (error) throw error;
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send magic link');
+            }
             
             messageDiv.style.background = '#d4edda';
             messageDiv.style.color = '#155724';
@@ -1010,7 +997,7 @@
         
         <!-- CCPA Compliance -->
         <div style="margin-bottom: 2rem;">
-            <a href="mailto:info@personacore.io?subject=CCPA Do Not Sell Request" style="color: white; text-decoration: none; opacity: 0.7; font-size: 0.9rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">Do Not Sell My Personal Information</a>
+            <a href="/cdn-cgi/l/email-protection#cba2a5ada48bbbaeb9b8a4a5aaa8a4b9aee5a2a4f4b8bea9a1aea8bff688889b8aeb8fa4eb85a4bfeb98aea7a7eb99aebabeaeb8bf" style="color: white; text-decoration: none; opacity: 0.7; font-size: 0.9rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">Do Not Sell My Personal Information</a>
         </div>
         
         <!-- Social Media Links -->
@@ -1031,7 +1018,7 @@
             <p style="opacity: 0.6; font-size: 0.9rem;">&copy; 2025 PersonaCore Ltd. All rights reserved.</p>
             <p style="opacity: 0.6; font-size: 0.85rem; margin-top: 0.5rem;">Garden Lodge, 135 Marsland Road, Sale, M33 3NZ, United Kingdom</p>
             <p style="opacity: 0.6; font-size: 0.85rem; margin-top: 0.5rem;">
-                <a href="mailto:hello@personacore.io" style="color: white; text-decoration: none;">hello@personacore.io</a>
+                <a href="/cdn-cgi/l/email-protection#a5cdc0c9c9cae5d5c0d7d6cacbc4c6cad7c08bccca" style="color: white; text-decoration: none;"><span class="__cf_email__" data-cfemail="0a626f6666654a7a6f787965646b6965786f246365">[email&#160;protected]</span></a>
             </p>
         </div>
     </div>
@@ -1052,7 +1039,7 @@
     </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Check if user has already responded to cookie consent
 window.addEventListener('DOMContentLoaded', function() {
     const cookieConsent = localStorage.getItem('cookieConsent');
@@ -1062,18 +1049,4 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 function acceptCookies() {
-    localStorage.setItem('cookieConsent', 'accepted');
-    document.getElementById('cookie-consent-banner').style.display = 'none';
-    // Enable analytics/tracking here if needed
-    console.log('Cookies accepted');
-}
-
-function rejectCookies() {
-    localStorage.setItem('cookieConsent', 'rejected');
-    document.getElementById('cookie-consent-banner').style.display = 'none';
-    // Disable non-essential cookies here
-    console.log('Non-essential cookies rejected');
-}
-</script>
-</body>
-</html>
+    localStorage.setItem('cook
