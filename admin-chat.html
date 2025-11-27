@@ -508,7 +508,7 @@
 
             try {
                 // Still calls your existing chat worker
-                const response = await fetch('https://personacore-chat.pwigglesworth-cloudflare.workers.dev/chat', {
+                const response = await fetch('https://personacore-chat.pwigglesworth-cloudflare.workers.dev/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
